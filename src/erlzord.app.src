@@ -1,0 +1,15 @@
+{application, erlzord,
+ [{description, "N-dimensional Z-order curves for Erlang"},
+  {vsn, git},
+  {registered, [erlzord]},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, ["Guilherme Andrade"]},
+  {licenses, ["MIT"]},
+  {links, [{"Github", "https://github.com/g-andrade/erlzord"}]}
+ ]}.
