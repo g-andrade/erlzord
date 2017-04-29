@@ -40,40 +40,40 @@ coordinates() = [integer()] | tuple()
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#calculate-2">calculate/2</a></td><td></td></tr><tr><td valign="top"><a href="#calculate-3">calculate/3</a></td><td></td></tr><tr><td valign="top"><a href="#config-2">config/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#config-3">config/3</a></td><td></td></tr><tr><td valign="top"><a href="#encode-2">encode/2</a></td><td></td></tr><tr><td valign="top"><a href="#encode-4">encode/4</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="calculate-2"></a>
+<a name="config-3"></a>
 
-### calculate/2 ###
+### config/3 ###
 
 <pre><code>
-calculate(Coordinates, Config) -&gt; Z
+config(Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Config
+</code></pre>
+
+<ul class="definitions"><li><code>Dimension = non_neg_integer()</code></li><li><code>MinCoordinateValue = integer()</code></li><li><code>MaxCoordinateValue = integer()</code></li><li><code>Config = <a href="#type-config">config()</a></code></li></ul>
+
+<a name="encode-2"></a>
+
+### encode/2 ###
+
+<pre><code>
+encode(Coordinates, Config) -&gt; Z
 </code></pre>
 
 <ul class="definitions"><li><code>Coordinates = <a href="#type-coordinates">coordinates()</a></code></li><li><code>Config = <a href="#type-config">config()</a></code></li><li><code>Z = non_neg_integer()</code></li></ul>
 
-<a name="calculate-3"></a>
+<a name="encode-4"></a>
 
-### calculate/3 ###
-
-<pre><code>
-calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue) -&gt; Z
-</code></pre>
-
-<ul class="definitions"><li><code>Coordinates = <a href="#type-coordinates">coordinates()</a></code></li><li><code>MinCoordinateValue = integer()</code></li><li><code>MaxCoordinateValue = integer()</code></li><li><code>Z = non_neg_integer()</code></li></ul>
-
-<a name="config-2"></a>
-
-### config/2 ###
+### encode/4 ###
 
 <pre><code>
-config(MinCoordinateValue, MaxCoordinateValue) -&gt; Config
+encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Z
 </code></pre>
 
-<ul class="definitions"><li><code>MinCoordinateValue = integer()</code></li><li><code>MaxCoordinateValue = integer()</code></li><li><code>Config = <a href="#type-config">config()</a></code></li></ul>
+<ul class="definitions"><li><code>Coordinates = <a href="#type-coordinates">coordinates()</a></code></li><li><code>Dimension = non_neg_integer()</code></li><li><code>MinCoordinateValue = integer()</code></li><li><code>MaxCoordinateValue = integer()</code></li><li><code>Z = non_neg_integer()</code></li></ul>
 

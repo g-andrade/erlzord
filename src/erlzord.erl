@@ -11,28 +11,37 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([config/2]).        -ignore_xref({config,2}).
--export([calculate/2]).     -ignore_xref({calculate,2}).
--export([calculate/3]).     -ignore_xref({calculate,3}).
+-export([config/3]).        -ignore_xref({config,3}).
+-export([encode/2]).        -ignore_xref({encode,2}).
+-export([encode/4]).        -ignore_xref({encode,4}).
 
 %% ------------------------------------------------------------------
 %% Macro Definitions
 %% ------------------------------------------------------------------
 
+-define(IS_UNSIGNED_INT(V), (is_integer((V) andalso (V) >= 0))).
+
 -define(IS_VALID_RANGE(Min, Max), (is_integer((Min)) andalso
                                    is_integer((Max)) andalso
                                    Max >= Min)).
+
+-define(IS_OF_DIMENSION(Coordinates, Dimension),
+        ((is_list((Coordinates)) andalso (length((Coordinates)) =:= (Dimension)))
+            orelse
+         (is_tuple((Coordinates)) andalso (size((Coordinates)) =:= (Dimension))))).
 
 %% ------------------------------------------------------------------
 %% Type Definitions
 %% ------------------------------------------------------------------
 
 -ifdef(pre19).
--opaque config() :: #{ min_coordinate_value => integer(),
+-opaque config() :: #{ dimension => non_neg_integer(),
+                       min_coordinate_value => integer(),
                        max_coordinate_value => integer(),
                        coordinate_bitsize => non_neg_integer() }.
 -else.
--opaque config() :: #{ min_coordinate_value := integer(),
+-opaque config() :: #{ dimension := non_neg_integer(),
+                       min_coordinate_value := integer(),
                        max_coordinate_value := integer(),
                        coordinate_bitsize := non_neg_integer() }.
 -endif.
@@ -46,66 +55,74 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
--spec config(MinCoordinateValue, MaxCoordinateValue) -> Config
-        when MinCoordinateValue :: integer(),
+-spec config(Dimension, MinCoordinateValue, MaxCoordinateValue) -> Config
+        when Dimension :: non_neg_integer(),
+             MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              Config :: config().
-config(MinCoordinateValue, MaxCoordinateValue)
-  when ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
+config(Dimension, MinCoordinateValue, MaxCoordinateValue)
+  when ?IS_UNSIGNED_INT(Dimension),
+       ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
     Range = MaxCoordinateValue - MinCoordinateValue,
     CoordinateBitsize = unsigned_integer_bitsize(Range),
-    #{ min_coordinate_value => MinCoordinateValue,
+    #{ dimension => Dimension,
+       min_coordinate_value => MinCoordinateValue,
        max_coordinate_value => MaxCoordinateValue,
        coordinate_bitsize => CoordinateBitsize }.
 
--spec calculate(Coordinates, Config) -> Z
+-spec encode(Coordinates, Config) -> Z
         when Coordinates :: coordinates(),
              Config :: config(),
              Z :: non_neg_integer().
-calculate(Coordinates, Config) ->
+encode(Coordinates, #{ dimension := Dimension } = Config)
+  when ?IS_OF_DIMENSION(Coordinates, Dimension) ->
     #{ min_coordinate_value := MinCoordinateValue,
        max_coordinate_value := MaxCoordinateValue,
        coordinate_bitsize := CoordinateBitsize } = Config,
-    calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
+    encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
--spec calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue) -> Z
+-spec encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Z
         when Coordinates :: coordinates(),
+             Dimension :: non_neg_integer(),
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              Z :: non_neg_integer().
-calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue)
-  when ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
+encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue)
+  when ?IS_OF_DIMENSION(Coordinates, Dimension),
+       ?IS_UNSIGNED_INT(Dimension),
+       ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
     Range = MaxCoordinateValue - MinCoordinateValue,
     CoordinateBitsize = unsigned_integer_bitsize(Range),
-    calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
+    encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
--spec calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize) -> Z
+-spec encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize) -> Z
         when Coordinates :: coordinates(),
+             Dimension :: non_neg_integer(),
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              CoordinateBitsize :: non_neg_integer(),
              Z :: non_neg_integer().
-calculate(CoordinatesTuple, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize)
+encode(CoordinatesTuple, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize)
   when is_tuple(CoordinatesTuple) ->
     Coordinates = tuple_to_list(CoordinatesTuple),
-    calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize);
-calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize) ->
+    encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize);
+encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize) ->
     % Cull values and make them unsigned
     NormalizedCoordinates =
         [cull(V, MinCoordinateValue, MaxCoordinateValue) - MinCoordinateValue
          || V <- Coordinates],
-    interleave(NormalizedCoordinates, CoordinateBitsize).
+    interleave(NormalizedCoordinates, Dimension, CoordinateBitsize).
 
--spec interleave(Values, Bitsize) -> Interleaved
+-spec interleave(Values, Dimension, Bitsize) -> Interleaved
         when Values :: [non_neg_integer()],
+             Dimension :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
              Interleaved :: non_neg_integer().
-interleave(Values, Bitsize) ->
-    Dimension = length(Values),
+interleave(Values, Dimension, Bitsize) ->
     interleave_recur(Values, Dimension, Bitsize, Bitsize, 0).
 
 -spec interleave_recur(Values, Dimension, TotalBitsize, Bitsize, Acc) -> Interleaved

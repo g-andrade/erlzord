@@ -26,23 +26,24 @@ for path in test_data_filepaths:
         function_name = '\'%s_test_\'' % test_data_filename
         parse_result = parse.parse(
                 '{:d}dim_from_{:d}_to_{:d}.data', test_data_filename)
-        (_coord_dim, coord_from, coord_to) = parse_result
+        (coord_dim, coord_from, coord_to) = parse_result
         output += '''
 -spec {function_name}() -> fun(() -> ok).
 {function_name}() ->
     fun () ->
-        Config = erlzord:config({coord_from}, {coord_to}),
+        Config = erlzord:config({coord_dim}, {coord_from}, {coord_to}),
         {{ok, Terms}} = file:consult("{erl_test_data_filepath}"),
 
         lists:foreach(
             fun ({{Coordinates, ExpectedValue}}) ->
-                Value = erlzord:calculate(Coordinates, Config),
+                Value = erlzord:encode(Coordinates, Config),
                 ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, Value}})
             end,
             Terms)
     end.
 '''.format(
         function_name=function_name,
+        coord_dim=coord_dim,
         coord_from=coord_from,
         coord_to=coord_to,
         erl_test_data_filepath=path)
