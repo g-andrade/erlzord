@@ -98,8 +98,9 @@ encode(Coordinates, #{ dimension := Dimension } = Config)
              Coordinates :: tuple_coordinates().
 decode(Z, #{ dimension := Dimension, coordinate_bitsize := CoordinateBitsize } = Config)
   when ?IS_OF_BITSIZE(Z, Dimension * CoordinateBitsize) ->
-    #{ min_coordinate_value := MinCoordinateValue } = Config,
-    decode_(Z, Dimension, MinCoordinateValue, CoordinateBitsize).
+    #{ min_coordinate_value := MinCoordinateValue,
+       max_coordinate_value := MaxCoordinateValue } = Config,
+    decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
 -spec encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Z
         when Coordinates :: coordinates(),
@@ -127,7 +128,7 @@ decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue)
        ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
     Range = MaxCoordinateValue - MinCoordinateValue,
     CoordinateBitsize = unsigned_integer_bitsize(Range),
-    decode_(Z, Dimension, MinCoordinateValue, CoordinateBitsize).
+    decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
@@ -198,37 +199,51 @@ conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
     conjugate_values_recur(T, DimensionIndex + 1, Bit bor AccConjugated, [NewH | AccNewValues]).
 
 
--spec decode_(Z, Dimension, MinCoordinateValue, Bitsize) -> Coordinates
+-spec decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue,
+              Bitsize) -> Coordinates
         when Z :: non_neg_integer(),
              Dimension :: non_neg_integer(),
              MinCoordinateValue :: integer(),
+             MaxCoordinateValue :: integer(),
              Bitsize :: non_neg_integer(),
              Coordinates :: tuple_coordinates().
-decode_(Z, Dimension, MinCoordinateValue, Bitsize) ->
-    NormalizedCoordinates = revert_interleave(Z, Dimension, Bitsize),
-    % restore original range
-    list_to_tuple([MinCoordinateValue + Value || Value <- NormalizedCoordinates]).
+decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, Bitsize) ->
+    {NewZ, NormalizedCoordinates} = revert_interleave(Z, Dimension, Bitsize),
 
--spec revert_interleave(Interleaved, Dimension, Bitsize) -> Values
+    (NewZ =:= 0 orelse throw({badarg,Z})), % some higher bits weren't processed
+    Coordinates =
+        lists:map(
+          fun (NormalizedValue) ->
+                  Value = MinCoordinateValue + NormalizedValue,
+                  (Value =< MaxCoordinateValue orelse throw({badarg, Z})), % out of range
+                  Value
+          end,
+          NormalizedCoordinates),
+
+    list_to_tuple(Coordinates).
+
+-spec revert_interleave(Interleaved, Dimension, Bitsize) -> {NewInterLeaved, Values}
         when Interleaved :: non_neg_integer(),
              Dimension :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
+             NewInterLeaved :: non_neg_integer(),
              Values :: [non_neg_integer()].
 revert_interleave(Interleaved, Dimension, Bitsize) ->
     Acc0 = repeat(0, Dimension),
     revert_interleave_recur(Interleaved, Dimension, Bitsize, 0, Acc0).
 
 -spec revert_interleave_recur(Interleaved, Dimension, Bitsize, BitIndex,
-                              Acc) -> FinalAcc
+                              Acc) -> {NewInterLeaved, FinalAcc}
         when Interleaved :: non_neg_integer(),
              Dimension :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
              BitIndex :: non_neg_integer(),
              Acc :: [non_neg_integer()],
+             NewInterLeaved :: non_neg_integer(),
              FinalAcc :: [non_neg_integer()].
-revert_interleave_recur(_Interleaved, _Dimension, Bitsize, BitIndex, Acc)
+revert_interleave_recur(Interleaved, _Dimension, Bitsize, BitIndex, Acc)
   when BitIndex >= Bitsize ->
-    Acc;
+    {Interleaved, Acc};
 revert_interleave_recur(Interleaved, Dimension, Bitsize, BitIndex, Acc) ->
     {NewInterLeaved, NewAcc} = unchain_values(Interleaved, Bitsize, BitIndex, Acc),
     revert_interleave_recur(NewInterLeaved, Dimension, Bitsize,
