@@ -71,6 +71,7 @@
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              Config :: config().
+
 config(Dimension, MinCoordinateValue, MaxCoordinateValue)
   when ?IS_UNSIGNED_INT(Dimension),
        ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
@@ -81,10 +82,12 @@ config(Dimension, MinCoordinateValue, MaxCoordinateValue)
        max_coordinate_value => MaxCoordinateValue,
        coordinate_bitsize => CoordinateBitsize }.
 
+
 -spec encode(Coordinates, Config) -> Z
         when Coordinates :: coordinates(),
              Config :: config(),
              Z :: non_neg_integer().
+
 encode(Coordinates, #{ dimension := Dimension } = Config)
   when ?IS_OF_DIMENSION(Coordinates, Dimension) ->
     #{ min_coordinate_value := MinCoordinateValue,
@@ -92,15 +95,18 @@ encode(Coordinates, #{ dimension := Dimension } = Config)
        coordinate_bitsize := CoordinateBitsize } = Config,
     encode_(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
+
 -spec decode(Z, Config) -> Coordinates
         when Z :: non_neg_integer(),
              Config :: config(),
              Coordinates :: tuple_coordinates().
+
 decode(Z, #{ dimension := Dimension, coordinate_bitsize := CoordinateBitsize } = Config)
   when ?IS_OF_BITSIZE(Z, Dimension * CoordinateBitsize) ->
     #{ min_coordinate_value := MinCoordinateValue,
        max_coordinate_value := MaxCoordinateValue } = Config,
     decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
+
 
 -spec encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Z
         when Coordinates :: coordinates(),
@@ -108,6 +114,8 @@ decode(Z, #{ dimension := Dimension, coordinate_bitsize := CoordinateBitsize } =
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              Z :: non_neg_integer().
+
+
 encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue)
   when ?IS_OF_DIMENSION(Coordinates, Dimension),
        ?IS_UNSIGNED_INT(Dimension),
@@ -116,12 +124,14 @@ encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue)
     CoordinateBitsize = unsigned_integer_bitsize(Range),
     encode_(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
+
 -spec decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Coordinates
         when Z :: non_neg_integer(),
              Dimension :: non_neg_integer(),
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              Coordinates :: tuple_coordinates().
+
 decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue)
   when ?IS_UNSIGNED_INT(Z),
        ?IS_UNSIGNED_INT(Dimension),
@@ -141,6 +151,7 @@ decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue)
              MaxCoordinateValue :: integer(),
              CoordinateBitsize :: non_neg_integer(),
              Z :: non_neg_integer().
+
 encode_(CoordinatesTuple, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize)
   when is_tuple(CoordinatesTuple) ->
     Coordinates = tuple_to_list(CoordinatesTuple),
@@ -152,13 +163,16 @@ encode_(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, Coordina
          || V <- Coordinates],
     interleave(NormalizedCoordinates, Dimension, CoordinateBitsize).
 
+
 -spec interleave(Values, Dimension, Bitsize) -> Interleaved
         when Values :: list_coordinates(),
              Dimension :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
              Interleaved :: non_neg_integer().
+
 interleave(Values, Dimension, Bitsize) ->
     interleave_recur(Values, Dimension, Bitsize, Bitsize, 0).
+
 
 -spec interleave_recur(Values, Dimension, TotalBitsize, BitIndex, Acc) -> Interleaved
         when Values :: list_coordinates(),
@@ -167,6 +181,7 @@ interleave(Values, Dimension, Bitsize) ->
              BitIndex :: non_neg_integer(),
              Acc :: non_neg_integer(),
              Interleaved :: non_neg_integer().
+
 interleave_recur(_Values, _Dimension, _TotalBitsize, 0 = _BitIndex, Acc) ->
     Acc;
 interleave_recur(Values, Dimension, TotalBitsize, BitIndex, Acc) ->
@@ -176,12 +191,15 @@ interleave_recur(Values, Dimension, TotalBitsize, BitIndex, Acc) ->
     NewAcc = Acc bor ShiftedConjugated,
     interleave_recur(NewValues, Dimension, TotalBitsize, BitIndex - 1, NewAcc).
 
+
 -spec conjugate_values(Values) -> {Conjugated, NewValues}
         when Values :: [non_neg_integer()],
              Conjugated :: non_neg_integer(),
              NewValues :: [non_neg_integer()].
+
 conjugate_values(Values) ->
     conjugate_values_recur(Values, 0, 0, []).
+
 
 -spec conjugate_values_recur(Values, DimensionIndex, AccConjugated, AccNewValues)
     -> {Conjugated, NewValues}
@@ -191,6 +209,7 @@ conjugate_values(Values) ->
              AccNewValues :: list_coordinates(),
              Conjugated :: non_neg_integer(),
              NewValues :: list_coordinates().
+
 conjugate_values_recur([], _DimensionIndex, AccConjugated, AccNewValues) ->
     {AccConjugated, lists:reverse(AccNewValues)};
 conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
@@ -207,6 +226,7 @@ conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
              MaxCoordinateValue :: integer(),
              Bitsize :: non_neg_integer(),
              Coordinates :: tuple_coordinates().
+
 decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, Bitsize) ->
     {NewZ, NormalizedCoordinates} = revert_interleave(Z, Dimension, Bitsize),
 
@@ -222,15 +242,18 @@ decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, Bitsize) ->
 
     list_to_tuple(Coordinates).
 
+
 -spec revert_interleave(Interleaved, Dimension, Bitsize) -> {NewInterLeaved, Values}
         when Interleaved :: non_neg_integer(),
              Dimension :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
              NewInterLeaved :: non_neg_integer(),
              Values :: [non_neg_integer()].
+
 revert_interleave(Interleaved, Dimension, Bitsize) ->
     Acc0 = repeat(0, Dimension),
     revert_interleave_recur(Interleaved, Dimension, Bitsize, 0, Acc0).
+
 
 -spec revert_interleave_recur(Interleaved, Dimension, Bitsize, BitIndex,
                               Acc) -> {NewInterLeaved, FinalAcc}
@@ -241,6 +264,7 @@ revert_interleave(Interleaved, Dimension, Bitsize) ->
              Acc :: [non_neg_integer()],
              NewInterLeaved :: non_neg_integer(),
              FinalAcc :: [non_neg_integer()].
+
 revert_interleave_recur(Interleaved, _Dimension, Bitsize, BitIndex, Acc)
   when BitIndex >= Bitsize ->
     {Interleaved, Acc};
@@ -248,6 +272,7 @@ revert_interleave_recur(Interleaved, Dimension, Bitsize, BitIndex, Acc) ->
     {NewInterLeaved, NewAcc} = unchain_values(Interleaved, Bitsize, BitIndex, Acc),
     revert_interleave_recur(NewInterLeaved, Dimension, Bitsize,
                             BitIndex + 1, NewAcc).
+
 
 -spec unchain_values(Conjugated, Bitsize, BitIndex,
                      ValuesAcc) -> {NewConjugated, NewValuesAcc}
@@ -257,8 +282,10 @@ revert_interleave_recur(Interleaved, Dimension, Bitsize, BitIndex, Acc) ->
              ValuesAcc :: [non_neg_integer()],
              NewConjugated :: non_neg_integer(),
              NewValuesAcc :: [non_neg_integer()].
+
 unchain_values(Conjugated, Bitsize, BitIndex, ValuesAcc) ->
     unchain_values_recur(Conjugated, Bitsize, BitIndex, ValuesAcc, []).
+
 
 -spec unchain_values_recur(Conjugated, Bitsize, BitIndex,
                            ValuesAcc, NewValuesAcc) -> {NewConjugated, FinalValuesAcc}
@@ -269,6 +296,7 @@ unchain_values(Conjugated, Bitsize, BitIndex, ValuesAcc) ->
              NewConjugated :: non_neg_integer(),
              NewValuesAcc :: [non_neg_integer()],
              FinalValuesAcc :: [non_neg_integer()].
+
 unchain_values_recur(Conjugated, _Bitsize, _BitIndex, [], NewValuesAcc) ->
     {Conjugated, lists:reverse(NewValuesAcc)};
 unchain_values_recur(Conjugated, Bitsize, BitIndex, [H|T], NewValuesAcc) ->
@@ -283,34 +311,42 @@ unchain_values_recur(Conjugated, Bitsize, BitIndex, [H|T], NewValuesAcc) ->
              Min :: integer(),
              Max :: integer(),
              CulledValue :: integer().
+
 cull(Value, Min, Max) when is_integer(Value) ->
     if Value > Max -> Max;
        Value < Min -> Min;
        true -> Value
     end.
 
+
 -spec unsigned_integer_bitsize(Value) -> Bitsize
         when Value :: non_neg_integer(),
              Bitsize :: non_neg_integer().
+
 unsigned_integer_bitsize(Value) ->
     unsigned_integer_bitsize_recur(Value, 0).
+
 
 -spec unsigned_integer_bitsize_recur(Value, Acc) -> Bitsize
         when Value :: non_neg_integer(),
              Acc :: non_neg_integer(),
              Bitsize :: non_neg_integer().
+
 unsigned_integer_bitsize_recur(Value, Acc) when Value < 1 ->
     Acc;
 unsigned_integer_bitsize_recur(Value, Acc) ->
     unsigned_integer_bitsize_recur(Value bsr 1, Acc + 1).
+
 
 -spec repeat(V, N) -> FinalAcc
         when V :: ValueT,
              N :: non_neg_integer(),
              FinalAcc :: [ValueT, ...],
              ValueT :: 0. % sigh
+
 repeat(V, N) ->
     repeat_recur(V, N, []).
+
 
 -spec repeat_recur(V, N, Acc) -> FinalAcc
         when V :: ValueT,
@@ -318,6 +354,7 @@ repeat(V, N) ->
              Acc :: [ValueT],
              FinalAcc :: [ValueT, ...],
              ValueT :: 0.
+
 repeat_recur(_V, N, Acc) when N < 1->
     Acc;
 repeat_recur(V, N, Acc) ->
