@@ -1,12 +1,6 @@
 -module(erlzord).
 -author('Guilherme Andrade <erlzord(at)gandrade(dot)net>').
 
--ifdef(COMPILE_NATIVE_ERLZORD).
--compile([inline, inline_list_funcs, native, {hipe, o3}]).
--else.
--compile([inline, inline_list_funcs]).
--endif.
-
 %% ------------------------------------------------------------------
 %% API Function Exports
 %% ------------------------------------------------------------------
@@ -114,7 +108,6 @@ decode(Z, #{ dimension := Dimension, coordinate_bitsize := CoordinateBitsize } =
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              Z :: non_neg_integer().
-
 
 encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue)
   when ?IS_OF_DIMENSION(Coordinates, Dimension),
