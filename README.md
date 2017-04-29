@@ -49,7 +49,7 @@ erlzord:encode({0, 0, 100},     Config), % 1179904
 erlzord:encode({100, 100, 100}, Config). % 2064832
 
 % 10d points
-Config = erlzord:config(100, 0, 100),
+Config = erlzord:config(10, 0, 100),
 erlzord:encode(
     {100, 100, 100, 100, 100, 100, 100, 
      100, 100, 100}, Config). % 1180590494818577154048
