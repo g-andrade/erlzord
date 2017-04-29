@@ -19,7 +19,7 @@ __Authors:__ Guilherme Andrade ([`erlzord(at)gandrade(dot)net`](mailto:erlzord(a
 * No limit on the bitsize of output values
 
 The code was successfully tested on generations 17, 18 and 19 of Erlang/OTP; the test cases and their data
-were automatically generated based on an existing [Python Implementation](https://github.com/LLNL/rubik/blob/master/rubik/zorder.py)
+were automatically generated based on an existing [Python implementation](https://github.com/LLNL/rubik/blob/master/rubik/zorder.py)
 from the [rubik](https://github.com/LLNL/rubik) project.
 
 

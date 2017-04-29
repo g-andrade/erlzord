@@ -12,7 +12,7 @@
 * No limit on the bitsize of output values
 
 The code was successfully tested on generations 17, 18 and 19 of Erlang/OTP; the test cases and their data
-were automatically generated based on an existing <a href="https://github.com/LLNL/rubik/blob/master/rubik/zorder.py">Python Implementation</a>
+were automatically generated based on an existing <a href="https://github.com/LLNL/rubik/blob/master/rubik/zorder.py">Python implementation</a>
 from the <a href="https://github.com/LLNL/rubik">rubik</a> project.
 
 == Examples ==
