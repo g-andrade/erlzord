@@ -37,7 +37,10 @@ for path in test_data_filepaths:
         lists:foreach(
             fun ({{Coordinates, ExpectedValue}}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, Value}})
+                ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, Value}}),
+
+                DirectValue = erlzord:encode(Coordinates, {coord_dim}, {coord_from}, {coord_to}),
+                ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, DirectValue}})
             end,
             Terms)
     end.

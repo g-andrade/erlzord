@@ -15,7 +15,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 10, 0, 100),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -29,7 +32,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 10, 0, 12345679),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -43,7 +49,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 10, 0, 7),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -57,7 +66,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 1, 0, 100),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -71,7 +83,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 1, 0, 12345679),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -85,7 +100,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 1, 0, 7),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -99,7 +117,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 2, 0, 100),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -113,7 +134,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 2, 0, 12345679),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -127,7 +151,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 2, 0, 7),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -141,7 +168,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 30, 0, 100),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -155,7 +185,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 30, 0, 12345679),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -169,7 +202,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 30, 0, 7),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -183,7 +219,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 3, 0, 100),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -197,7 +236,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 3, 0, 12345679),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -211,7 +253,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 3, 0, 7),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -225,7 +270,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 4, 0, 100),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -239,7 +287,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 4, 0, 12345679),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -253,7 +304,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 4, 0, 7),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -267,7 +321,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 5, 0, 100),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -281,7 +338,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 5, 0, 12345679),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
@@ -295,7 +355,10 @@
         lists:foreach(
             fun ({Coordinates, ExpectedValue}) ->
                 Value = erlzord:encode(Coordinates, Config),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
+
+                DirectValue = erlzord:encode(Coordinates, 5, 0, 7),
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
             end,
             Terms)
     end.
