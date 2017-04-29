@@ -37,7 +37,7 @@ test:
 	@$(REBAR3) eunit
 
 test_code:
-	./test_cases/generate_code.py test_cases/test_data/*.data src/erlzord_test.erl
+	./test_cases/generate_code.py test_cases/test_data/*.data test/erlzord_test.erl
 
 test_data: clean_test_data
 	./test_cases/generate_data.py  1          0         7 >test_cases/test_data/1dim_from_0_to_7.data
