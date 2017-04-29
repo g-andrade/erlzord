@@ -39,28 +39,35 @@ test:
 test_code:
 	./test_cases/generate_code.py test_cases/test_data/*.data src/erlzord_test.erl
 
-test_data:
-	./test_cases/generate_data.py 1 0 7 >test_cases/test_data/1dim_from_0_to_7.data
-	./test_cases/generate_data.py 2 0 7 >test_cases/test_data/2dim_from_0_to_7.data
-	./test_cases/generate_data.py 3 0 7 >test_cases/test_data/3dim_from_0_to_7.data
-	./test_cases/generate_data.py 4 0 7 >test_cases/test_data/4dim_from_0_to_7.data
-	./test_cases/generate_data.py 5 0 7 >test_cases/test_data/5dim_from_0_to_7.data
-	./test_cases/generate_data.py 10 0 7 >test_cases/test_data/10dim_from_0_to_7.data
-	./test_cases/generate_data.py 30 0 7 >test_cases/test_data/30dim_from_0_to_7.data
-	./test_cases/generate_data.py 1 0 100 >test_cases/test_data/1dim_from_0_to_100.data
-	./test_cases/generate_data.py 2 0 100 >test_cases/test_data/2dim_from_0_to_100.data
-	./test_cases/generate_data.py 3 0 100 >test_cases/test_data/3dim_from_0_to_100.data
-	./test_cases/generate_data.py 4 0 100 >test_cases/test_data/4dim_from_0_to_100.data
-	./test_cases/generate_data.py 5 0 100 >test_cases/test_data/5dim_from_0_to_100.data
-	./test_cases/generate_data.py 10 0 100 >test_cases/test_data/10dim_from_0_to_100.data
-	./test_cases/generate_data.py 30 0 100 >test_cases/test_data/30dim_from_0_to_100.data
-	./test_cases/generate_data.py 1 0 12345679 >test_cases/test_data/1dim_from_0_to_12345679.data
-	./test_cases/generate_data.py 2 0 12345679 >test_cases/test_data/2dim_from_0_to_12345679.data
-	./test_cases/generate_data.py 3 0 12345679 >test_cases/test_data/3dim_from_0_to_12345679.data
-	./test_cases/generate_data.py 4 0 12345679 >test_cases/test_data/4dim_from_0_to_12345679.data
-	./test_cases/generate_data.py 5 0 12345679 >test_cases/test_data/5dim_from_0_to_12345679.data
-	./test_cases/generate_data.py 10 0 12345679 >test_cases/test_data/10dim_from_0_to_12345679.data
-	./test_cases/generate_data.py 30 0 12345679 >test_cases/test_data/30dim_from_0_to_12345679.data
+test_data: clean_test_data
+	./test_cases/generate_data.py  1          0         7 >test_cases/test_data/1dim_from_0_to_7.data
+	./test_cases/generate_data.py  2          0         7 >test_cases/test_data/2dim_from_0_to_7.data
+	./test_cases/generate_data.py  3          0         7 >test_cases/test_data/3dim_from_0_to_7.data
+	./test_cases/generate_data.py  4          0         7 >test_cases/test_data/4dim_from_0_to_7.data
+	./test_cases/generate_data.py  5          0         7 >test_cases/test_data/5dim_from_0_to_7.data
+	./test_cases/generate_data.py 10          0         7 >test_cases/test_data/10dim_from_0_to_7.data
+	./test_cases/generate_data.py 30          0         7 >test_cases/test_data/30dim_from_0_to_7.data
+	./test_cases/generate_data.py  1          0       100 >test_cases/test_data/1dim_from_0_to_100.data
+	./test_cases/generate_data.py  2          0       100 >test_cases/test_data/2dim_from_0_to_100.data
+	./test_cases/generate_data.py  3          0       100 >test_cases/test_data/3dim_from_0_to_100.data
+	./test_cases/generate_data.py  4          0       100 >test_cases/test_data/4dim_from_0_to_100.data
+	./test_cases/generate_data.py  5          0       100 >test_cases/test_data/5dim_from_0_to_100.data
+	./test_cases/generate_data.py 10          0       100 >test_cases/test_data/10dim_from_0_to_100.data
+	./test_cases/generate_data.py 30          0       100 >test_cases/test_data/30dim_from_0_to_100.data
+	./test_cases/generate_data.py  1          0 123456789 >test_cases/test_data/1dim_from_0_to_123456789.data
+	./test_cases/generate_data.py  2          0 123456789 >test_cases/test_data/2dim_from_0_to_123456789.data
+	./test_cases/generate_data.py  3          0 123456789 >test_cases/test_data/3dim_from_0_to_123456789.data
+	./test_cases/generate_data.py  4          0 123456789 >test_cases/test_data/4dim_from_0_to_123456789.data
+	./test_cases/generate_data.py  5          0 123456789 >test_cases/test_data/5dim_from_0_to_123456789.data
+	./test_cases/generate_data.py 10          0 123456789 >test_cases/test_data/10dim_from_0_to_123456789.data
+	./test_cases/generate_data.py 30          0 123456789 >test_cases/test_data/30dim_from_0_to_123456789.data
+	./test_cases/generate_data.py  1 -123456789     54321 >test_cases/test_data/1dim_from_-123456789_to_54321.data
+	./test_cases/generate_data.py  2 -123456789     54321 >test_cases/test_data/2dim_from_-123456789_to_54321.data
+	./test_cases/generate_data.py  3 -123456789     54321 >test_cases/test_data/3dim_from_-123456789_to_54321.data
+	./test_cases/generate_data.py  4 -123456789     54321 >test_cases/test_data/4dim_from_-123456789_to_54321.data
+	./test_cases/generate_data.py  5 -123456789     54321 >test_cases/test_data/5dim_from_-123456789_to_54321.data
+	./test_cases/generate_data.py 10 -123456789     54321 >test_cases/test_data/10dim_from_-123456789_to_54321.data
+	./test_cases/generate_data.py 30 -123456789     54321 >test_cases/test_data/30dim_from_-123456789_to_54321.data
 
-test_cases_clean:
+clean_test_data:
 	rm test_cases/test_data/*.data

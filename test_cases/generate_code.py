@@ -3,6 +3,13 @@ import parse
 import os
 import sys
 
+def eunit_safe_number_str(v):
+    if v < 0:
+        return 'minus%s' % abs(v)
+    else:
+        return str(v)
+
+
 test_data_filepaths = sys.argv[1:-1]
 code_output_filepath = sys.argv[-1]
 code_output_filename = os.path.basename(code_output_filepath)
@@ -23,10 +30,13 @@ output += '''-module({module_name}).
 for path in test_data_filepaths:
     with open(path, 'r') as test_data_file:
         test_data_filename = os.path.basename(path)
-        function_name = '\'%s_test_\'' % test_data_filename
         parse_result = parse.parse(
                 '{:d}dim_from_{:d}_to_{:d}.data', test_data_filename)
         (coord_dim, coord_from, coord_to) = parse_result
+        function_name = '\'%dd_from_%s_to_%s_test_\'' % (
+                coord_dim,
+                eunit_safe_number_str(coord_from),
+                eunit_safe_number_str(coord_to))
         output += '''
 -spec {function_name}() -> fun(() -> ok).
 {function_name}() ->
