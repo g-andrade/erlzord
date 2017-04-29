@@ -58,7 +58,7 @@
 config(MinCoordinateValue, MaxCoordinateValue)
   when ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
     Range = MaxCoordinateValue - MinCoordinateValue,
-    CoordinateBitsize = positive_integer_bitsize(Range),
+    CoordinateBitsize = unsigned_integer_bitsize(Range),
     #{ min_coordinate_value => MinCoordinateValue,
        max_coordinate_value => MaxCoordinateValue,
        coordinate_bitsize => CoordinateBitsize }.
@@ -81,7 +81,7 @@ calculate(Coordinates, Config) ->
 calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue)
   when ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
     Range = MaxCoordinateValue - MinCoordinateValue,
-    CoordinateBitsize = positive_integer_bitsize(Range),
+    CoordinateBitsize = unsigned_integer_bitsize(Range),
     calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
 %% ------------------------------------------------------------------
@@ -159,32 +159,20 @@ conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
 cull(Value, Min, Max) when is_integer(Value) ->
     max(Min, min(Max, Value)).
 
--spec positive_integer_bitsize(Value) -> Log2
-        when Value :: pos_integer(),
-             Log2 :: non_neg_integer().
-positive_integer_bitsize(Value) when Value =< 1 bsl 1023 ->
-    ceil(log2(Value + 1));
-positive_integer_bitsize(Value) ->
-    1023 + positive_integer_bitsize(Value div (1 bsl 1023)).
+-spec unsigned_integer_bitsize(Value) -> Bitsize
+        when Value :: non_neg_integer(),
+             Bitsize :: non_neg_integer().
+unsigned_integer_bitsize(Value) ->
+    unsigned_integer_bitsize_recur(Value, 0).
 
--spec ceil(Value) -> Ceil
-        when Value :: float(),
-             Ceil :: integer().
-ceil(Value) ->
-    TruncValue = trunc(Value),
-    case TruncValue == Value of
-        true -> TruncValue;
-        false -> TruncValue + 1
-    end.
-
--spec log2(Value) -> Log2
-        when Value :: pos_integer(),
-             Log2 :: float().
--ifdef(pre18).
-log2(V) -> math:log(V) / math:log(2).
--else.
-log2(V) -> math:log2(V).
--endif.
+-spec unsigned_integer_bitsize_recur(Value, Acc) -> Bitsize
+        when Value :: non_neg_integer(),
+             Acc :: non_neg_integer(),
+             Bitsize :: non_neg_integer().
+unsigned_integer_bitsize_recur(Value, Acc) when Value < 1 ->
+    Acc;
+unsigned_integer_bitsize_recur(Value, Acc) ->
+    unsigned_integer_bitsize_recur(Value bsr 1, Acc + 1).
 
 %% ------------------------------------------------------------------
 %% Unit Tests
