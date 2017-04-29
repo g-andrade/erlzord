@@ -40,7 +40,13 @@ for path in test_data_filepaths:
                 ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, Value}}),
 
                 DirectValue = erlzord:encode(Coordinates, {coord_dim}, {coord_from}, {coord_to}),
-                ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, DirectValue}})
+                ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, DirectValue}}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({{Value, DecodedCoordinates}}, {{Value, Coordinates}}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, {coord_dim}, {coord_from}, {coord_to}),
+                ?assertEqual({{Value, DirectDecodedCoordinates}}, {{Value, Coordinates}})
             end,
             Terms)
     end.

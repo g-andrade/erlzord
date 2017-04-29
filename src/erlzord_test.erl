@@ -18,7 +18,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 10, 0, 100),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 10, 0, 100),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -35,7 +41,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 10, 0, 12345679),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 10, 0, 12345679),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -52,7 +64,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 10, 0, 7),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 10, 0, 7),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -69,7 +87,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 1, 0, 100),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 1, 0, 100),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -86,7 +110,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 1, 0, 12345679),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 1, 0, 12345679),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -103,7 +133,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 1, 0, 7),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 1, 0, 7),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -120,7 +156,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 2, 0, 100),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 2, 0, 100),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -137,7 +179,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 2, 0, 12345679),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 2, 0, 12345679),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -154,7 +202,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 2, 0, 7),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 2, 0, 7),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -171,7 +225,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 30, 0, 100),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 30, 0, 100),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -188,7 +248,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 30, 0, 12345679),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 30, 0, 12345679),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -205,7 +271,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 30, 0, 7),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 30, 0, 7),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -222,7 +294,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 3, 0, 100),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 3, 0, 100),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -239,7 +317,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 3, 0, 12345679),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 3, 0, 12345679),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -256,7 +340,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 3, 0, 7),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 3, 0, 7),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -273,7 +363,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 4, 0, 100),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 4, 0, 100),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -290,7 +386,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 4, 0, 12345679),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 4, 0, 12345679),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -307,7 +409,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 4, 0, 7),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 4, 0, 7),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -324,7 +432,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 5, 0, 100),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 5, 0, 100),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -341,7 +455,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 5, 0, 12345679),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 5, 0, 12345679),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.
@@ -358,7 +478,13 @@
                 ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, Value}),
 
                 DirectValue = erlzord:encode(Coordinates, 5, 0, 7),
-                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue})
+                ?assertEqual({Coordinates, ExpectedValue}, {Coordinates, DirectValue}),
+
+                DecodedCoordinates = erlzord:decode(Value, Config),
+                ?assertEqual({Value, DecodedCoordinates}, {Value, Coordinates}),
+
+                DirectDecodedCoordinates = erlzord:decode(Value, 5, 0, 7),
+                ?assertEqual({Value, DirectDecodedCoordinates}, {Value, Coordinates})
             end,
             Terms)
     end.

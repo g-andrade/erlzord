@@ -29,29 +29,26 @@ from the [rubik](https://github.com/LLNL/rubik) project.
 
 % 1d points
 Config = erlzord:config(1, 0, 100), % Coordinate values between 0 and 100
-erlzord:encode({0},   Config),      % 0
-erlzord:encode({50},  Config),      % 50
-erlzord:encode({100}, Config).      % 100
+erlzord:encode({42}, Config),       % 42
+erlzord:decode(42, Config).         % {42}
 
 % 2d points
 Config = erlzord:config(2, 0, 100),
-erlzord:encode({0, 0},     Config), % 0
-erlzord:encode({50, 0},    Config), % 1284
-erlzord:encode({0, 100},   Config), % 15408
-erlzord:encode({100, 100}, Config). % 15408
+erlzord:encode({50,0}, Config), % 1284
+erlzord:decode(1284,   Config). % {50,0}
 
 % 3d points
 Config = erlzord:config(3, 0, 100),
-erlzord:encode({0, 0, 0},       Config), % 0
-erlzord:encode({50, 0, 0},      Config), % 36872
-erlzord:encode({0, 0, 100},     Config), % 1179904
-erlzord:encode({100, 100, 100}, Config). % 2064832
+erlzord:encode({0,0,100}, Config), % 1179904
+erlzord:decode(1179904,   Config). % {0,0,100}
 
 % 10d points
 Config = erlzord:config(10, 0, 100),
 erlzord:encode(
-    {100, 100, 100, 100, 100, 100, 100, 
-     100, 100, 100}, Config). % 1180590494818577154048
+    {100, 100, 100, 100, 100, 100, 100,
+     100, 100, 100}, Config), % 1180590494818577154048
+erlzord:decode(
+    1180590494818577154048, Config). % {100,100,..,100}.
 
 ```
 
