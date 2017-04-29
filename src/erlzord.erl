@@ -157,7 +157,10 @@ conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
              Max :: integer(),
              CulledValue :: integer().
 cull(Value, Min, Max) when is_integer(Value) ->
-    max(Min, min(Max, Value)).
+    if Value > Max -> Max;
+       Value < Min -> Min;
+       true -> Value
+    end.
 
 -spec unsigned_integer_bitsize(Value) -> Bitsize
         when Value :: non_neg_integer(),
