@@ -30,6 +30,9 @@ dialyzer:
 xref:
 	@$(REBAR3) xref
 
+doc: build
+	./scripts/hackish_make_docs.sh
+
 test:
 	@$(REBAR3) eunit
 

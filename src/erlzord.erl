@@ -28,15 +28,14 @@
 %% ------------------------------------------------------------------
 
 -ifdef(pre19).
--define(MAPT_KV_REQ_SPEC(K, V), (K) => (V)).
+-opaque config() :: #{ min_coordinate_value => integer(),
+                       max_coordinate_value => integer(),
+                       coordinate_bitsize => non_neg_integer() }.
 -else.
-% otherwise Dialyzer will complain of overspec
--define(MAPT_KV_REQ_SPEC(K, V), (K) := (V)).
+-opaque config() :: #{ min_coordinate_value := integer(),
+                       max_coordinate_value := integer(),
+                       coordinate_bitsize := non_neg_integer() }.
 -endif.
-
--opaque config() :: #{ ?MAPT_KV_REQ_SPEC(min_coordinate_value, integer()),
-                       ?MAPT_KV_REQ_SPEC(max_coordinate_value, integer()),
-                       ?MAPT_KV_REQ_SPEC(coordinate_bitsize, non_neg_integer()) }.
 
 -type coordinates() :: [integer()] | tuple().
 
