@@ -94,7 +94,7 @@ calculate(CoordinatesTuple, MinCoordinateValue, MaxCoordinateValue, CoordinateBi
     Coordinates = tuple_to_list(CoordinatesTuple),
     calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize);
 calculate(Coordinates, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize) ->
-    % Make sure they're all between MinCoordinateValue and MaxCoordinateValue
+    % Cull values and make them unsigned
     NormalizedCoordinates =
         [cull(V, MinCoordinateValue, MaxCoordinateValue) - MinCoordinateValue
          || V <- Coordinates],
