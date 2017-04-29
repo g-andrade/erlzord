@@ -138,6 +138,7 @@ decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue)
        ?IS_VALID_RANGE(MinCoordinateValue, MaxCoordinateValue) ->
     Range = MaxCoordinateValue - MinCoordinateValue,
     CoordinateBitsize = unsigned_integer_bitsize(Range),
+    (?IS_OF_BITSIZE(Z, Dimension * CoordinateBitsize) orelse exit({badarg,Z})),
     decode_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
 
 %% ------------------------------------------------------------------
