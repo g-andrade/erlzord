@@ -1,5 +1,5 @@
 {application, erlzord,
- [{description, "N-dimensional Z-order curves for Erlang"},
+ [{description, "N-dimensional Z-order curves"},
   {vsn, git},
   {registered, [erlzord]},
   {applications,
