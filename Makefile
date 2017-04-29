@@ -10,7 +10,7 @@ ifeq ($(REBAR3),)
 	REBAR3 = $(CURDIR)/rebar3
 endif
 
-.PHONY: deps build test dialyzer xref
+.PHONY: deps build test dialyzer xref test_code test_cases test_cases_clean
 
 all: build
 
@@ -32,3 +32,32 @@ xref:
 
 test:
 	@$(REBAR3) eunit
+
+test_code:
+	./test_cases/generate_code.py test_cases/test_data/*.data src/erlzord_test.erl
+
+test_data:
+	./test_cases/generate_data.py 1 0 7 >test_cases/test_data/1dim_from_0_to_7.data
+	./test_cases/generate_data.py 2 0 7 >test_cases/test_data/2dim_from_0_to_7.data
+	./test_cases/generate_data.py 3 0 7 >test_cases/test_data/3dim_from_0_to_7.data
+	./test_cases/generate_data.py 4 0 7 >test_cases/test_data/4dim_from_0_to_7.data
+	./test_cases/generate_data.py 5 0 7 >test_cases/test_data/5dim_from_0_to_7.data
+	./test_cases/generate_data.py 10 0 7 >test_cases/test_data/10dim_from_0_to_7.data
+	./test_cases/generate_data.py 30 0 7 >test_cases/test_data/30dim_from_0_to_7.data
+	./test_cases/generate_data.py 1 0 100 >test_cases/test_data/1dim_from_0_to_100.data
+	./test_cases/generate_data.py 2 0 100 >test_cases/test_data/2dim_from_0_to_100.data
+	./test_cases/generate_data.py 3 0 100 >test_cases/test_data/3dim_from_0_to_100.data
+	./test_cases/generate_data.py 4 0 100 >test_cases/test_data/4dim_from_0_to_100.data
+	./test_cases/generate_data.py 5 0 100 >test_cases/test_data/5dim_from_0_to_100.data
+	./test_cases/generate_data.py 10 0 100 >test_cases/test_data/10dim_from_0_to_100.data
+	./test_cases/generate_data.py 30 0 100 >test_cases/test_data/30dim_from_0_to_100.data
+	./test_cases/generate_data.py 1 0 12345679 >test_cases/test_data/1dim_from_0_to_12345679.data
+	./test_cases/generate_data.py 2 0 12345679 >test_cases/test_data/2dim_from_0_to_12345679.data
+	./test_cases/generate_data.py 3 0 12345679 >test_cases/test_data/3dim_from_0_to_12345679.data
+	./test_cases/generate_data.py 4 0 12345679 >test_cases/test_data/4dim_from_0_to_12345679.data
+	./test_cases/generate_data.py 5 0 12345679 >test_cases/test_data/5dim_from_0_to_12345679.data
+	./test_cases/generate_data.py 10 0 12345679 >test_cases/test_data/10dim_from_0_to_12345679.data
+	./test_cases/generate_data.py 30 0 12345679 >test_cases/test_data/30dim_from_0_to_12345679.data
+
+test_cases_clean:
+	rm test_cases/test_data/*.data

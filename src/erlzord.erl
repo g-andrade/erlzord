@@ -7,10 +7,6 @@
 -compile([inline, inline_list_funcs]).
 -endif.
 
--ifdef(TEST).
--include_lib("eunit/include/eunit.hrl").
--endif.
-
 %% ------------------------------------------------------------------
 %% API Function Exports
 %% ------------------------------------------------------------------
@@ -176,45 +172,3 @@ unsigned_integer_bitsize_recur(Value, Acc) when Value < 1 ->
     Acc;
 unsigned_integer_bitsize_recur(Value, Acc) ->
     unsigned_integer_bitsize_recur(Value bsr 1, Acc + 1).
-
-%% ------------------------------------------------------------------
-%% Unit Tests
-%% ------------------------------------------------------------------
-
--ifdef(TEST).
-
--spec test() -> ok.
-
--spec basic_test_() -> fun(() -> ok).
-basic_test_() ->
-    fun () ->
-            Config = config(0, 7),
-            Coordinates =
-                [{X, Y} || X <- lists:seq(0, 7), Y <- lists:seq(0, 7)],
-
-            ExpectedValues =
-                [0,2,8,10,32,34,40,42,1,3,9,11,33,35,41,43,4,6,12,14,36,38,
-                 44,46,5,7,13,15,37,39,45,47,16,18,24,26,48,50,56,58,17,19,
-                 25,27,49,51,57,59,20,22,28,30,52,54,60,62,21,23,29,31,53,55,
-                 61,63],
-
-            lists_foreach2(
-              fun ({X, Y}, ExpectedValue) ->
-                      Value = calculate([X, Y], Config),
-                      ?assertEqual(Value, ExpectedValue)
-              end,
-              Coordinates,
-              ExpectedValues)
-    end.
-
--spec lists_foreach2(Fun, L1, L2) -> ok
-        when Fun :: fun ((T1, T2) -> ok),
-             L1 :: [T1],
-             L2 :: [T2].
-lists_foreach2(_Fun, [], []) ->
-    ok;
-lists_foreach2(Fun, [H1|T1], [H2|T2]) ->
-    Fun(H1, H2),
-    lists_foreach2(Fun, T1, T2).
-
--endif.
