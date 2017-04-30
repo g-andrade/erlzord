@@ -1,6 +1,6 @@
 {application, erlzord,
  [{description, "N-dimensional Z-order curves"},
-  {vsn, git},
+  {vsn, "1.0.0"},
   {registered, [erlzord]},
   {applications,
    [kernel,
