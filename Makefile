@@ -10,7 +10,7 @@ ifeq ($(REBAR3),)
 	REBAR3 = $(CURDIR)/rebar3
 endif
 
-.PHONY: deps build test dialyzer xref test_code test_cases test_cases_clean
+.PHONY: deps build test dialyzer xref test_code test_cases test_cases_clean publish
 
 all: build
 
@@ -71,3 +71,6 @@ test_data: clean_test_data
 
 clean_test_data:
 	rm test_cases/test_data/*.data
+
+publish:
+	@$(REBAR3) as publish hex publish
