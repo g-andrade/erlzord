@@ -40,3 +40,6 @@ erlzord:encode(
 erlzord:decode(
     1180590494818577154048, Config). % {100,100,..,100}.
 </pre>
+
+== TODO ==
+* Range searches
