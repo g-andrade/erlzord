@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -ex
 
 # sigh.....
 rebar3 as generate_documentation compile
