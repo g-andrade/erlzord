@@ -1,6 +1,6 @@
 {application, erlzord,
  [{description, "N-dimensional Z-order curves"},
-  {vsn, git},
+  {vsn, "git"},
   {registered, [erlzord]},
   {applications,
    [kernel,
@@ -9,7 +9,6 @@
   {env,[]},
   {modules, []},
 
-  {maintainers, ["Guilherme Andrade"]},
   {licenses, ["MIT"]},
   {links, [{"Github", "https://github.com/g-andrade/erlzord"}]}
  ]}.
