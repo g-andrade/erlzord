@@ -1,6 +1,6 @@
 @author Guilherme Andrade <erlzord(at)gandrade(dot)net>
 @copyright 2017 Guilherme Andrade
-@version 1.0.2
+@version 1.0.3
 @title erlzord
 @doc `erlzord': N-dimensional Z-order curves for Erlang
 

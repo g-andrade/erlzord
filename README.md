@@ -4,7 +4,7 @@
 
 Copyright (c) 2017 Guilherme Andrade
 
-__Version:__ 1.0.2
+__Version:__ 1.0.3
 
 __Authors:__ Guilherme Andrade ([`erlzord(at)gandrade(dot)net`](mailto:erlzord(at)gandrade(dot)net)).
 
