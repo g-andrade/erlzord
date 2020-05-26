@@ -35,17 +35,10 @@
 %% Type Definitions
 %% ------------------------------------------------------------------
 
--ifdef(pre19).
--opaque config() :: #{ dimension => non_neg_integer(),
-                       min_coordinate_value => integer(),
-                       max_coordinate_value => integer(),
-                       coordinate_bitsize => non_neg_integer() }.
--else.
 -opaque config() :: #{ dimension := non_neg_integer(),
                        min_coordinate_value := integer(),
                        max_coordinate_value := integer(),
                        coordinate_bitsize := non_neg_integer() }.
--endif.
 
 -type list_coordinates() :: [integer()].
 -type tuple_coordinates() :: tuple().
