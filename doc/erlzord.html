@@ -19,10 +19,6 @@
 <p><b>abstract datatype</b>: <tt>config()</tt></p>
 
 
-<h3 class="typedecl"><a name="type-config">config()</a></h3>
-<p><b>abstract datatype</b>: <tt>config()</tt></p>
-
-
 <h3 class="typedecl"><a name="type-coordinates">coordinates()</a></h3>
 <p><tt>coordinates() = <a href="#type-list_coordinates">list_coordinates()</a> | <a href="#type-tuple_coordinates">tuple_coordinates()</a></tt></p>
 
@@ -49,30 +45,35 @@
 <div class="spec">
 <p><tt>config(Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Config</tt>
 <ul class="definitions"><li><tt>Dimension = non_neg_integer()</tt></li><li><tt>MinCoordinateValue = integer()</tt></li><li><tt>MaxCoordinateValue = integer()</tt></li><li><tt>Config = <a href="#type-config">config()</a></tt></li></ul></p>
+<p> </p>
 </div>
 
 <h3 class="function"><a name="decode-2">decode/2</a></h3>
 <div class="spec">
 <p><tt>decode(Z, Config) -&gt; Coordinates</tt>
 <ul class="definitions"><li><tt>Z = non_neg_integer()</tt></li><li><tt>Config = <a href="#type-config">config()</a></tt></li><li><tt>Coordinates = <a href="#type-tuple_coordinates">tuple_coordinates()</a></tt></li></ul></p>
+<p> </p>
 </div>
 
 <h3 class="function"><a name="decode-4">decode/4</a></h3>
 <div class="spec">
 <p><tt>decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Coordinates</tt>
 <ul class="definitions"><li><tt>Z = non_neg_integer()</tt></li><li><tt>Dimension = non_neg_integer()</tt></li><li><tt>MinCoordinateValue = integer()</tt></li><li><tt>MaxCoordinateValue = integer()</tt></li><li><tt>Coordinates = <a href="#type-tuple_coordinates">tuple_coordinates()</a></tt></li></ul></p>
+<p> </p>
 </div>
 
 <h3 class="function"><a name="encode-2">encode/2</a></h3>
 <div class="spec">
 <p><tt>encode(Coordinates, Config) -&gt; Z</tt>
 <ul class="definitions"><li><tt>Coordinates = <a href="#type-coordinates">coordinates()</a></tt></li><li><tt>Config = <a href="#type-config">config()</a></tt></li><li><tt>Z = non_neg_integer()</tt></li></ul></p>
+<p> </p>
 </div>
 
 <h3 class="function"><a name="encode-4">encode/4</a></h3>
 <div class="spec">
 <p><tt>encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Z</tt>
 <ul class="definitions"><li><tt>Coordinates = <a href="#type-coordinates">coordinates()</a></tt></li><li><tt>Dimension = non_neg_integer()</tt></li><li><tt>MinCoordinateValue = integer()</tt></li><li><tt>MaxCoordinateValue = integer()</tt></li><li><tt>Z = non_neg_integer()</tt></li></ul></p>
+<p> </p>
 </div>
 <hr>
 

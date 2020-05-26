@@ -20,14 +20,6 @@ __abstract datatype__: `config()`
 
 
 
-### <a name="type-config">config()</a> ###
-
-
-__abstract datatype__: `config()`
-
-
-
-
 ### <a name="type-coordinates">coordinates()</a> ###
 
 
