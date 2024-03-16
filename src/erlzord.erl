@@ -95,6 +95,11 @@
 -export_type([tuple_vector/0]).
 -export_type([list_vector/0]).
 
+-record(encoding_direction, {
+    shift_start_offset :: non_neg_integer(),
+    shift_increment :: +1 | -1
+}).
+
 %% ------------------------------------------------------------------
 %% Deprecated Type Definitions
 %% ------------------------------------------------------------------
@@ -133,19 +138,16 @@ config(ConfigParams) ->
 encode(Vector, #erlzord_config{
                        dimensions = Dimensions,
                        min_component = MinComponent,
-                       max_component = MaxComponent,
-                       component_bitsize = ComponentBitsize
+                       max_component = MaxComponent
        }) ->
 
     case Vector of
         Tuple when tuple_size(Tuple) =:= Dimensions ->
             List = tuple_to_list(Tuple),
-            encode_list_(List, Dimensions, MinComponent,
-                         MaxComponent, ComponentBitsize);
+            encode_list_(List, Dimensions, MinComponent, MaxComponent);
 
         List when length(List) =:= Dimensions ->
-            encode_list_(List, Dimensions, MinComponent,
-                         MaxComponent, ComponentBitsize);
+            encode_list_(List, Dimensions, MinComponent, MaxComponent);
 
         BadArg ->
             error({badarg, BadArg})
@@ -195,8 +197,7 @@ encode(Vector, MinComponent, MaxComponent) ->
         end,
 
     validate_params(Dimensions, MinComponent, MaxComponent),
-    ComponentBitsize = component_bitsize(MinComponent, MaxComponent),
-    encode_list_(List, Dimensions, MinComponent, MaxComponent, ComponentBitsize).
+    encode_list_(List, Dimensions, MinComponent, MaxComponent).
 
 -spec decode_tuple(Z, Dimensions, MinComponent, MaxComponent) -> Vector
         when Z :: non_neg_integer(),
@@ -315,68 +316,61 @@ component_bitsize(MinComponent, MaxComponent) ->
     Range = MaxComponent - MinComponent,
     unsigned_integer_bitsize(Range).
 
--spec encode_list_(Vector, Dimensions, MinComponent,
-              MaxComponent, ComponentBitsize) -> Z
+-spec encode_list_(Vector, Dimensions, MinComponent, MaxComponent) -> Z
         when Vector :: list_vector(),
              Dimensions :: non_neg_integer(),
              MinComponent :: integer(),
              MaxComponent :: integer(),
-             ComponentBitsize :: non_neg_integer(),
              Z :: non_neg_integer().
 %% @doc Encodes `Vector', a tuple or list of `Dimensions`
 %% Returns a pre-validated config which `:encode/2' and `:decode/2'` can use.
-encode_list_(Vector, Dimensions, MinComponent, MaxComponent, ComponentBitsize) ->
+encode_list_(Vector, Dimensions, MinComponent, MaxComponent) ->
     % Make values unsigned
     NormalizedVector =
         [validate_component(V, MinComponent, MaxComponent) - MinComponent
          || V <- Vector],
-    interleave(NormalizedVector, Dimensions, ComponentBitsize).
+    interleave(NormalizedVector, Dimensions). %, ComponentBitsize).
 
--spec interleave(Values, Dimensions, Bitsize) -> Interleaved
-        when Values :: list_vector(),
-             Dimensions :: non_neg_integer(),
-             Bitsize :: non_neg_integer(),
-             Interleaved :: non_neg_integer().
-interleave(Values, Dimensions, Bitsize) ->
-    interleave_recur(Values, Dimensions, Bitsize, Bitsize, 0).
+interleave(Values, Dimensions) ->
+    Direction = #encoding_direction{shift_start_offset = 0, shift_increment = +1},
+    AlternateDirection
+        = #encoding_direction{shift_start_offset = Dimensions - 1, shift_increment = -1},
 
--spec interleave_recur(Values, Dimensions, TotalBitsize, BitIndex, Acc) -> Interleaved
-        when Values :: list_vector(),
-             Dimensions :: non_neg_integer(),
-             TotalBitsize :: non_neg_integer(),
-             BitIndex :: non_neg_integer(),
-             Acc :: non_neg_integer(),
-             Interleaved :: non_neg_integer().
-interleave_recur(_Values, _Dimensions, _TotalBitsize, 0 = _BitIndex, Acc) ->
-    Acc;
-interleave_recur(Values, Dimensions, TotalBitsize, BitIndex, Acc) ->
-    {Conjugated, NewValues} = conjugate_values(Values),
-    ShiftAmount = Dimensions * (TotalBitsize - BitIndex),
-    ShiftedConjugated = Conjugated bsl ShiftAmount,
-    NewAcc = Acc bor ShiftedConjugated,
-    interleave_recur(NewValues, Dimensions, TotalBitsize, BitIndex - 1, NewAcc).
+    interleave_recur(Values, Direction, AlternateDirection, Dimensions, _BitsizeAcc = 0, _Acc = 0).
 
--spec conjugate_values(Values) -> {Conjugated, NewValues}
-        when Values :: [non_neg_integer()],
-             Conjugated :: non_neg_integer(),
-             NewValues :: [non_neg_integer()].
-conjugate_values(Values) ->
-    conjugate_values_recur(Values, 0, 0, []).
+interleave_recur(Values, Direction, AlternateDirection, Dimensions, BitsizeAcc, Acc) ->
+    ShiftStart = BitsizeAcc + Direction#encoding_direction.shift_start_offset,
+    ShiftIncrement = Direction#encoding_direction.shift_increment,
+    % io:format("INTERLEAVING AFTER ~b bits~n", [BitsizeAcc]),
 
--spec conjugate_values_recur(Values, DimensionIndex, AccConjugated, AccNewValues)
-    -> {Conjugated, NewValues}
-        when Values :: list_vector(),
-             DimensionIndex :: non_neg_integer(),
-             AccConjugated :: non_neg_integer(),
-             AccNewValues :: list_vector(),
-             Conjugated :: non_neg_integer(),
-             NewValues :: list_vector().
-conjugate_values_recur([], _DimensionIndex, AccConjugated, AccNewValues) ->
-    {AccConjugated, lists:reverse(AccNewValues)};
-conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
-    Bit = (H band 1) bsl DimensionIndex,
-    NewH = H bsr 1,
-    conjugate_values_recur(T, DimensionIndex + 1, Bit bor AccConjugated, [NewH | AccNewValues]).
+    case interleave_next(Values, ShiftStart, ShiftIncrement, true, [], Acc) of
+        {RemainingValues, UpdatedAcc} ->
+            UpdatedBitsizeAcc = BitsizeAcc + Dimensions,
+            interleave_recur(RemainingValues, AlternateDirection, Direction, Dimensions,
+                             UpdatedBitsizeAcc, UpdatedAcc);
+
+        all_zeroes ->
+            Acc
+    end.
+
+interleave_next([Value | Next], Shift, ShiftIncrement, AllZeroes, RemainingValuesAcc, Acc) ->
+    ValueRemaining = Value bsr 1,
+    ValueMask = (Value band 1) bsl Shift,
+
+    UpdatedAllZeroes = AllZeroes andalso (Value =:= 0),
+    UpdatedRemainingValuesAcc = [ValueRemaining | RemainingValuesAcc],
+    UpdatedAcc = Acc bor ValueMask,
+
+    interleave_next(Next, Shift + ShiftIncrement, ShiftIncrement, UpdatedAllZeroes,
+                    UpdatedRemainingValuesAcc, UpdatedAcc);
+interleave_next([], _Shift, _ShiftIncrement, AllZeroes, RemainingValuesAcc, Acc) ->
+    case AllZeroes of
+        false ->
+            {RemainingValuesAcc, Acc};
+
+        true ->
+            all_zeroes
+    end.
 
 -spec decode_list_(Z, Dimensions, MinComponent, MaxComponent,
                    Bitsize) -> Vector
