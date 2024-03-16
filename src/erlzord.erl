@@ -20,10 +20,16 @@
 -ignore_xref(
         [config/1,
          encode/2,
+         decode_tuple/2,
+         decode_list/2,
+         encode/3,
+         decode_tuple/4,
+         decode_list/4,
+         % Deprecated exports
+         config/3,
          decode/2,
          encode/4,
-         decode/4,
-         config/3]).
+         decode/4]).
 
 -deprecated([
    {config, 3, "Use config/1 instead"},
