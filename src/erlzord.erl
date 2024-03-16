@@ -70,26 +70,38 @@
 %% ------------------------------------------------------------------
 
 -type config_params() :: #{
-    (dimensions | dimension) := non_neg_integer(),
-    min_coordinate_value := integer(),
-    max_coordinate_value := integer()
+    dimensions := non_neg_integer(),
+    min_component := integer(),
+    max_component := integer()
 }.
 
 -export_type([config_params/0]).
 
 -record(erlzord_config, {
-    dimension :: non_neg_integer(),
-    min_coordinate_value :: integer(),
-    max_coordinate_value :: integer(),
-    coordinate_bitsize :: non_neg_integer()
+    dimensions :: non_neg_integer(),
+    min_component :: integer(),
+    max_component :: integer(),
+    component_bitsize :: non_neg_integer()
 }).
 -opaque config() :: #erlzord_config{}.
 
 -export_type([config/0]).
 
--type tuple_coordinates() :: tuple().
--type list_coordinates() :: [integer()].
--type coordinates() :: tuple_coordinates() | list_coordinates().
+-type tuple_vector() :: tuple().
+-type list_vector() :: [integer()].
+-type vector() :: tuple_vector() | list_vector().
+
+-export_type([vector/0]).
+-export_type([tuple_vector/0]).
+-export_type([list_vector/0]).
+
+%% ------------------------------------------------------------------
+%% Deprecated Type Definitions
+%% ------------------------------------------------------------------
+
+-type tuple_coordinates() :: tuple_vector().
+-type list_coordinates() :: list_vector().
+-type coordinates() :: vector().
 
 -export_type([coordinates/0]).
 -export_type([tuple_coordinates/0]).
@@ -104,80 +116,74 @@
              Config :: config().
 config(ConfigParams) ->
     case ConfigParams of
-        #{ dimensions := Dimension,
-           min_coordinate_value := MinCoordinateValue,
-           max_coordinate_value := MaxCoordinateValue
+        #{ dimensions := Dimensions,
+           min_component := MinComponent,
+           max_component := MaxComponent
          } when map_size(ConfigParams) =:= 3 ->
-            config_(Dimension, MinCoordinateValue, MaxCoordinateValue);
-
-        #{ dimension := Dimension,
-           min_coordinate_value := MinCoordinateValue,
-           max_coordinate_value := MaxCoordinateValue
-         } when map_size(ConfigParams) =:= 3 ->
-            config_(Dimension, MinCoordinateValue, MaxCoordinateValue);
+            config_(Dimensions, MinComponent, MaxComponent);
 
         _ ->
             error({badarg, ConfigParams})
     end.
 
--spec encode(Coordinates, Config) -> Z
-        when Coordinates :: coordinates(),
+-spec encode(Vector, Config) -> Z
+        when Vector :: vector(),
              Config :: config(),
              Z :: non_neg_integer().
-encode(Coordinates, #erlzord_config{
-                       dimension = Dimension,
-                       min_coordinate_value = MinCoordinateValue,
-                       max_coordinate_value = MaxCoordinateValue,
-                       coordinate_bitsize = CoordinateBitsize
+encode(Vector, #erlzord_config{
+                       dimensions = Dimensions,
+                       min_component = MinComponent,
+                       max_component = MaxComponent,
+                       component_bitsize = ComponentBitsize
        }) ->
 
-    case Coordinates of
-        Tuple when tuple_size(Tuple) =:= Dimension ->
+    case Vector of
+        Tuple when tuple_size(Tuple) =:= Dimensions ->
             List = tuple_to_list(Tuple),
-            encode_list_(List, Dimension, MinCoordinateValue,
-                         MaxCoordinateValue, CoordinateBitsize);
+            encode_list_(List, Dimensions, MinComponent,
+                         MaxComponent, ComponentBitsize);
 
-        List when length(List) =:= Dimension ->
-            encode_list_(List, Dimension, MinCoordinateValue,
-                         MaxCoordinateValue, CoordinateBitsize);
+        List when length(List) =:= Dimensions ->
+            encode_list_(List, Dimensions, MinComponent,
+                         MaxComponent, ComponentBitsize);
 
         BadArg ->
             error({badarg, BadArg})
     end;
-encode(_Coordinates, BadArg) ->
+encode(_Vector, BadArg) ->
     error({badarg, BadArg}).
 
--spec decode_tuple(Z, Config) -> Coordinates
+-spec decode_tuple(Z, Config) -> Vector
         when Z :: non_neg_integer(),
              Config :: config(),
-             Coordinates :: tuple_coordinates().
+             Vector :: tuple_vector().
 decode_tuple(Z, Config) ->
     List = decode_list(Z, Config),
     list_to_tuple(List).
 
--spec decode_list(Z, Config) -> Coordinates
+-spec decode_list(Z, Config) -> Vector
         when Z :: non_neg_integer(),
              Config :: config(),
-             Coordinates :: list_coordinates().
+             Vector :: list_vector().
 decode_list(Z, #erlzord_config{
-                  dimension = Dimension,
-                  min_coordinate_value = MinCoordinateValue,
-                  max_coordinate_value = MaxCoordinateValue,
-                  coordinate_bitsize = CoordinateBitsize
+                  dimensions = Dimensions,
+                  min_component = MinComponent,
+                  max_component = MaxComponent,
+                  component_bitsize = ComponentBitsize
     }) ->
-    validate_z(Z, Dimension, CoordinateBitsize),
-    decode_list_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize);
+    validate_z(Z, Dimensions, ComponentBitsize),
+    decode_list_(Z, Dimensions, MinComponent, MaxComponent, ComponentBitsize);
 decode_list(_Z, BadArg) ->
     error({badarg, BadArg}).
 
--spec encode(Coordinates, MinCoordinateValue, MaxCoordinateValue) -> Z
-        when Coordinates :: coordinates(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
+-spec encode(Vector, MinComponent, MaxComponent) -> Z
+        when Vector :: vector(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
              Z :: non_neg_integer().
-encode(Coordinates, MinCoordinateValue, MaxCoordinateValue) ->
-    {Dimension, List} =
-        case Coordinates of
+encode(Vector, MinComponent, MaxComponent) ->
+    {Dimensions, List} =
+        case Vector of
             TupleCoords when is_tuple(TupleCoords) ->
                 {tuple_size(TupleCoords), tuple_to_list(TupleCoords)};
 
@@ -185,119 +191,119 @@ encode(Coordinates, MinCoordinateValue, MaxCoordinateValue) ->
                 {length(ListCoords), ListCoords};
 
             _ ->
-                error({badarg, Coordinates})
+                error({badarg, Vector})
         end,
 
-    validate_params(Dimension, MinCoordinateValue, MaxCoordinateValue),
-    CoordinateBitsize = coordinate_bitsize(MinCoordinateValue, MaxCoordinateValue),
-    encode_list_(List, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
+    validate_params(Dimensions, MinComponent, MaxComponent),
+    ComponentBitsize = component_bitsize(MinComponent, MaxComponent),
+    encode_list_(List, Dimensions, MinComponent, MaxComponent, ComponentBitsize).
 
--spec decode_tuple(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Coordinates
+-spec decode_tuple(Z, Dimensions, MinComponent, MaxComponent) -> Vector
         when Z :: non_neg_integer(),
-             Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
-             Coordinates :: tuple_coordinates().
-decode_tuple(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) ->
-    List = decode_list(Z, Dimension, MinCoordinateValue, MaxCoordinateValue),
+             Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
+             Vector :: tuple_vector().
+decode_tuple(Z, Dimensions, MinComponent, MaxComponent) ->
+    List = decode_list(Z, Dimensions, MinComponent, MaxComponent),
     list_to_tuple(List).
 
--spec decode_list(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Coordinates
+-spec decode_list(Z, Dimensions, MinComponent, MaxComponent) -> Vector
         when Z :: non_neg_integer(),
-             Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
-             Coordinates :: list_coordinates().
-decode_list(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) ->
-    validate_params(Dimension, MinCoordinateValue, MaxCoordinateValue),
+             Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
+             Vector :: list_vector().
+decode_list(Z, Dimensions, MinComponent, MaxComponent) ->
+    validate_params(Dimensions, MinComponent, MaxComponent),
 
-    CoordinateBitsize = coordinate_bitsize(MinCoordinateValue, MaxCoordinateValue),
-    validate_z(Z, Dimension, CoordinateBitsize),
+    ComponentBitsize = component_bitsize(MinComponent, MaxComponent),
+    validate_z(Z, Dimensions, ComponentBitsize),
 
-    decode_list_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize).
+    decode_list_(Z, Dimensions, MinComponent, MaxComponent, ComponentBitsize).
 
 %% ------------------------------------------------------------------
 %% Deprecated API Function Definitions
 %% ------------------------------------------------------------------
 
--spec config(Dimension, MinCoordinateValue, MaxCoordinateValue) -> Config
-        when Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
+-spec config(Dimensions, MinComponent, MaxComponent) -> Config
+        when Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
              Config :: config().
-config(Dimension, MinCoordinateValue, MaxCoordinateValue) ->
-    config_(Dimension, MinCoordinateValue, MaxCoordinateValue).
+config(Dimensions, MinComponent, MaxComponent) ->
+    config_(Dimensions, MinComponent, MaxComponent).
 
--spec decode(Z, Config) -> Coordinates
+-spec decode(Z, Config) -> Vector
         when Z :: non_neg_integer(),
              Config :: config(),
-             Coordinates :: tuple_coordinates().
+             Vector :: tuple_vector().
 decode(Z, Config) ->
     decode_tuple(Z, Config).
 
--spec encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Z
-        when Coordinates :: coordinates(),
-             Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
+-spec encode(Vector, Dimensions, MinComponent, MaxComponent) -> Z
+        when Vector :: vector(),
+             Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
              Z :: non_neg_integer().
-encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue)
+encode(Vector, Dimensions, MinComponent, MaxComponent)
   when (
-    (is_tuple(Coordinates) andalso (tuple_size(Coordinates) =:= Dimension))
+    (is_tuple(Vector) andalso (tuple_size(Vector) =:= Dimensions))
     orelse
-    (length(Coordinates) =:= Dimension)
+    (length(Vector) =:= Dimensions)
   ) ->
-    encode(Coordinates, MinCoordinateValue, MaxCoordinateValue).
+    encode(Vector, MinComponent, MaxComponent).
 
--spec decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Coordinates
+-spec decode(Z, Dimensions, MinComponent, MaxComponent) -> Vector
         when Z :: non_neg_integer(),
-             Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
-             Coordinates :: tuple_coordinates().
-decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) ->
-    decode_tuple(Z, Dimension, MinCoordinateValue, MaxCoordinateValue).
+             Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
+             Vector :: tuple_vector().
+decode(Z, Dimensions, MinComponent, MaxComponent) ->
+    decode_tuple(Z, Dimensions, MinComponent, MaxComponent).
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
--spec config_(Dimension, MinCoordinateValue, MaxCoordinateValue) -> Config
-        when Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
+-spec config_(Dimensions, MinComponent, MaxComponent) -> Config
+        when Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
              Config :: config().
 %% @doc Returns a pre-validated config which `:encode/2' and `:decode/2'` can use.
-config_(Dimension, MinCoordinateValue, MaxCoordinateValue) ->
-    validate_params(Dimension, MinCoordinateValue, MaxCoordinateValue),
+config_(Dimensions, MinComponent, MaxComponent) ->
+    validate_params(Dimensions, MinComponent, MaxComponent),
 
     #erlzord_config{
-       dimension = Dimension,
-       min_coordinate_value = MinCoordinateValue,
-       max_coordinate_value = MaxCoordinateValue,
-       coordinate_bitsize = coordinate_bitsize(MinCoordinateValue, MaxCoordinateValue)
+       dimensions = Dimensions,
+       min_component = MinComponent,
+       max_component = MaxComponent,
+       component_bitsize = component_bitsize(MinComponent, MaxComponent)
     }.
 
-validate_params(Dimension, MinCoordinateValue, MaxCoordinateValue) ->
+validate_params(Dimensions, MinComponent, MaxComponent) ->
     case '_' of
-        _ when not ?IS_UNSIGNED_INT(Dimension) ->
-            error({badarg, Dimension});
+        _ when not ?IS_UNSIGNED_INT(Dimensions) ->
+            error({badarg, Dimensions});
 
-        _ when not is_integer(MinCoordinateValue) ->
-            error({badarg, MinCoordinateValue});
+        _ when not is_integer(MinComponent) ->
+            error({badarg, MinComponent});
 
-        _ when not is_integer(MaxCoordinateValue) ->
-            error({badarg, MaxCoordinateValue});
+        _ when not is_integer(MaxComponent) ->
+            error({badarg, MaxComponent});
 
-        _ when MaxCoordinateValue < MinCoordinateValue ->
-            error({badarg, MaxCoordinateValue});
+        _ when MaxComponent < MinComponent ->
+            error({badarg, MaxComponent});
 
         _ ->
             ok
     end.
 
-validate_z(Z, Dimension, CoordinateBitsize) ->
-    case ?IS_OF_BITSIZE(Z, Dimension * CoordinateBitsize) of
+validate_z(Z, Dimensions, ComponentBitsize) ->
+    case ?IS_OF_BITSIZE(Z, Dimensions * ComponentBitsize) of
         true ->
             ok;
 
@@ -305,50 +311,50 @@ validate_z(Z, Dimension, CoordinateBitsize) ->
             error({badarg, Z})
     end.
 
-coordinate_bitsize(MinCoordinateValue, MaxCoordinateValue) ->
-    Range = MaxCoordinateValue - MinCoordinateValue,
+component_bitsize(MinComponent, MaxComponent) ->
+    Range = MaxComponent - MinComponent,
     unsigned_integer_bitsize(Range).
 
--spec encode_list_(Coordinates, Dimension, MinCoordinateValue,
-              MaxCoordinateValue, CoordinateBitsize) -> Z
-        when Coordinates :: list_coordinates(),
-             Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
-             CoordinateBitsize :: non_neg_integer(),
+-spec encode_list_(Vector, Dimensions, MinComponent,
+              MaxComponent, ComponentBitsize) -> Z
+        when Vector :: list_vector(),
+             Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
+             ComponentBitsize :: non_neg_integer(),
              Z :: non_neg_integer().
-%% @doc Encodes `Coordinates', a tuple or list of `Dimension`
+%% @doc Encodes `Vector', a tuple or list of `Dimensions`
 %% Returns a pre-validated config which `:encode/2' and `:decode/2'` can use.
-encode_list_(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize) ->
+encode_list_(Vector, Dimensions, MinComponent, MaxComponent, ComponentBitsize) ->
     % Make values unsigned
-    NormalizedCoordinates =
-        [validate_coordinate_value(V, MinCoordinateValue, MaxCoordinateValue) - MinCoordinateValue
-         || V <- Coordinates],
-    interleave(NormalizedCoordinates, Dimension, CoordinateBitsize).
+    NormalizedVector =
+        [validate_component(V, MinComponent, MaxComponent) - MinComponent
+         || V <- Vector],
+    interleave(NormalizedVector, Dimensions, ComponentBitsize).
 
--spec interleave(Values, Dimension, Bitsize) -> Interleaved
-        when Values :: list_coordinates(),
-             Dimension :: non_neg_integer(),
+-spec interleave(Values, Dimensions, Bitsize) -> Interleaved
+        when Values :: list_vector(),
+             Dimensions :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
              Interleaved :: non_neg_integer().
-interleave(Values, Dimension, Bitsize) ->
-    interleave_recur(Values, Dimension, Bitsize, Bitsize, 0).
+interleave(Values, Dimensions, Bitsize) ->
+    interleave_recur(Values, Dimensions, Bitsize, Bitsize, 0).
 
--spec interleave_recur(Values, Dimension, TotalBitsize, BitIndex, Acc) -> Interleaved
-        when Values :: list_coordinates(),
-             Dimension :: non_neg_integer(),
+-spec interleave_recur(Values, Dimensions, TotalBitsize, BitIndex, Acc) -> Interleaved
+        when Values :: list_vector(),
+             Dimensions :: non_neg_integer(),
              TotalBitsize :: non_neg_integer(),
              BitIndex :: non_neg_integer(),
              Acc :: non_neg_integer(),
              Interleaved :: non_neg_integer().
-interleave_recur(_Values, _Dimension, _TotalBitsize, 0 = _BitIndex, Acc) ->
+interleave_recur(_Values, _Dimensions, _TotalBitsize, 0 = _BitIndex, Acc) ->
     Acc;
-interleave_recur(Values, Dimension, TotalBitsize, BitIndex, Acc) ->
+interleave_recur(Values, Dimensions, TotalBitsize, BitIndex, Acc) ->
     {Conjugated, NewValues} = conjugate_values(Values),
-    ShiftAmount = Dimension * (TotalBitsize - BitIndex),
+    ShiftAmount = Dimensions * (TotalBitsize - BitIndex),
     ShiftedConjugated = Conjugated bsl ShiftAmount,
     NewAcc = Acc bor ShiftedConjugated,
-    interleave_recur(NewValues, Dimension, TotalBitsize, BitIndex - 1, NewAcc).
+    interleave_recur(NewValues, Dimensions, TotalBitsize, BitIndex - 1, NewAcc).
 
 -spec conjugate_values(Values) -> {Conjugated, NewValues}
         when Values :: [non_neg_integer()],
@@ -359,12 +365,12 @@ conjugate_values(Values) ->
 
 -spec conjugate_values_recur(Values, DimensionIndex, AccConjugated, AccNewValues)
     -> {Conjugated, NewValues}
-        when Values :: list_coordinates(),
+        when Values :: list_vector(),
              DimensionIndex :: non_neg_integer(),
              AccConjugated :: non_neg_integer(),
-             AccNewValues :: list_coordinates(),
+             AccNewValues :: list_vector(),
              Conjugated :: non_neg_integer(),
-             NewValues :: list_coordinates().
+             NewValues :: list_vector().
 conjugate_values_recur([], _DimensionIndex, AccConjugated, AccNewValues) ->
     {AccConjugated, lists:reverse(AccNewValues)};
 conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
@@ -372,51 +378,51 @@ conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
     NewH = H bsr 1,
     conjugate_values_recur(T, DimensionIndex + 1, Bit bor AccConjugated, [NewH | AccNewValues]).
 
--spec decode_list_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue,
-                   Bitsize) -> Coordinates
+-spec decode_list_(Z, Dimensions, MinComponent, MaxComponent,
+                   Bitsize) -> Vector
         when Z :: non_neg_integer(),
-             Dimension :: non_neg_integer(),
-             MinCoordinateValue :: integer(),
-             MaxCoordinateValue :: integer(),
+             Dimensions :: non_neg_integer(),
+             MinComponent :: integer(),
+             MaxComponent :: integer(),
              Bitsize :: non_neg_integer(),
-             Coordinates :: list_coordinates().
-decode_list_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, Bitsize) ->
-    {NewZ, NormalizedCoordinates} = revert_interleave(Z, Dimension, Bitsize),
+             Vector :: list_vector().
+decode_list_(Z, Dimensions, MinComponent, MaxComponent, Bitsize) ->
+    {NewZ, NormalizedVector} = revert_interleave(Z, Dimensions, Bitsize),
 
     (NewZ =:= 0 orelse error({badarg, Z})), % some higher bits weren't processed
     lists:map(
       fun (NormalizedValue) ->
-              Value = MinCoordinateValue + NormalizedValue,
-              (Value =< MaxCoordinateValue orelse error({badarg, Z})), % out of range
+              Value = MinComponent + NormalizedValue,
+              (Value =< MaxComponent orelse error({badarg, Z})), % out of range
               Value
       end,
-      NormalizedCoordinates).
+      NormalizedVector).
 
--spec revert_interleave(Interleaved, Dimension, Bitsize) -> {NewInterLeaved, Values}
+-spec revert_interleave(Interleaved, Dimensions, Bitsize) -> {NewInterLeaved, Values}
         when Interleaved :: non_neg_integer(),
-             Dimension :: non_neg_integer(),
+             Dimensions :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
              NewInterLeaved :: non_neg_integer(),
              Values :: [non_neg_integer()].
-revert_interleave(Interleaved, Dimension, Bitsize) ->
-    Acc0 = repeat(0, Dimension),
-    revert_interleave_recur(Interleaved, Dimension, Bitsize, 0, Acc0).
+revert_interleave(Interleaved, Dimensions, Bitsize) ->
+    Acc0 = repeat(0, Dimensions),
+    revert_interleave_recur(Interleaved, Dimensions, Bitsize, 0, Acc0).
 
--spec revert_interleave_recur(Interleaved, Dimension, Bitsize, BitIndex,
+-spec revert_interleave_recur(Interleaved, Dimensions, Bitsize, BitIndex,
                               Acc) -> {NewInterLeaved, FinalAcc}
         when Interleaved :: non_neg_integer(),
-             Dimension :: non_neg_integer(),
+             Dimensions :: non_neg_integer(),
              Bitsize :: non_neg_integer(),
              BitIndex :: non_neg_integer(),
              Acc :: [non_neg_integer()],
              NewInterLeaved :: non_neg_integer(),
              FinalAcc :: [non_neg_integer()].
-revert_interleave_recur(Interleaved, _Dimension, Bitsize, BitIndex, Acc)
+revert_interleave_recur(Interleaved, _Dimensions, Bitsize, BitIndex, Acc)
   when BitIndex >= Bitsize ->
     {Interleaved, Acc};
-revert_interleave_recur(Interleaved, Dimension, Bitsize, BitIndex, Acc) ->
+revert_interleave_recur(Interleaved, Dimensions, Bitsize, BitIndex, Acc) ->
     {NewInterLeaved, NewAcc} = unchain_values(Interleaved, Bitsize, BitIndex, Acc),
-    revert_interleave_recur(NewInterLeaved, Dimension, Bitsize,
+    revert_interleave_recur(NewInterLeaved, Dimensions, Bitsize,
                             BitIndex + 1, NewAcc).
 
 -spec unchain_values(Conjugated, Bitsize, BitIndex,
@@ -447,16 +453,16 @@ unchain_values_recur(Conjugated, Bitsize, BitIndex, [H | T], NewValuesAcc) ->
     NewH = H bor (Bit bsl BitIndex),
     unchain_values_recur(NewConjugated, Bitsize, BitIndex, T, [NewH | NewValuesAcc]).
 
--spec validate_coordinate_value(Value, Min, Max) -> Value
+-spec validate_component(Value, Min, Max) -> Value
         when Value :: integer(),
              Min :: integer(),
              Max :: integer().
-validate_coordinate_value(Value, Min, Max) when is_integer(Value) ->
+validate_component(Value, Min, Max) when is_integer(Value) ->
     case Value of
         _ when Value > Max ->
-            error({coordinate_value_higher_than_max, [{value, Value}, {max, Max}]});
+            error({vector_component_higher_than_max, [{value, Value}, {max, Max}]});
         _ when Value < Min ->
-            error({coordinate_value_lower_than_min, [{value, Value}, {min, Min}]});
+            error({vector_component_lower_than_min, [{value, Value}, {min, Min}]});
         _ ->
             Value
     end.

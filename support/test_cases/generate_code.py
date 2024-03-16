@@ -47,19 +47,10 @@ for path in test_data_filepaths:
         10,
         fun () ->
             Config = erlzord:config(#{{
-                dimension => {coord_dim},
-                min_coordinate_value => {coord_from},
-                max_coordinate_value => {coord_to}
+                dimensions => {coord_dim},
+                min_component => {coord_from},
+                max_component => {coord_to}
             }}),
-
-            ?assertEqual(
-                Config,
-                erlzord:config(#{{
-                    dimensions => {coord_dim},
-                    min_coordinate_value => {coord_from},
-                    max_coordinate_value => {coord_to}
-                }})
-            ),
 
             ?assertEqual(
                 Config,
@@ -68,46 +59,46 @@ for path in test_data_filepaths:
 
             {{ok, Terms}} = file:consult("{erl_test_data_filepath}"),
             lists:foreach(
-                fun ({{Coordinates, ExpectedValue}}) ->
-                    Value = erlzord:encode(Coordinates, Config),
-                    ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, Value}}),
+                fun ({{Vector, ExpectedValue}}) ->
+                    Value = erlzord:encode(Vector, Config),
+                    ?assertEqual({{Vector, ExpectedValue}}, {{Vector, Value}}),
 
-                    ListValue = erlzord:encode(tuple_to_list(Coordinates), Config),
-                    ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, ListValue}}),
-
-
-                    DirectValue = erlzord:encode(Coordinates, {coord_from}, {coord_to}),
-                    ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, DirectValue}}),
-
-                    DirectValueList = erlzord:encode(tuple_to_list(Coordinates), {coord_from}, {coord_to}),
-                    ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, DirectValueList}}),
+                    ListValue = erlzord:encode(tuple_to_list(Vector), Config),
+                    ?assertEqual({{Vector, ExpectedValue}}, {{Vector, ListValue}}),
 
 
-                    LegacyDirectValue = erlzord:encode(Coordinates, {coord_dim}, {coord_from}, {coord_to}),
-                    ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, LegacyDirectValue}}),
+                    DirectValue = erlzord:encode(Vector, {coord_from}, {coord_to}),
+                    ?assertEqual({{Vector, ExpectedValue}}, {{Vector, DirectValue}}),
 
-                    LegacyDirectListValue = erlzord:encode(tuple_to_list(Coordinates), {coord_dim}, {coord_from}, {coord_to}),
-                    ?assertEqual({{Coordinates, ExpectedValue}}, {{Coordinates, LegacyDirectListValue}}),
-
-
-                    DecodedTupleCoordinates = erlzord:decode_tuple(Value, Config),
-                    ?assertEqual({{Value, DecodedTupleCoordinates}}, {{Value, Coordinates}}),
-
-                    DecodedListCoordinates = erlzord:decode_list(Value, Config),
-                    ?assertEqual({{Value, list_to_tuple(DecodedListCoordinates)}}, {{Value, Coordinates}}),
-
-                    DecodedLegacyTupleCoordinates = erlzord:decode(Value, Config),
-                    ?assertEqual({{Value, DecodedLegacyTupleCoordinates}}, {{Value, Coordinates}}),
+                    DirectValueList = erlzord:encode(tuple_to_list(Vector), {coord_from}, {coord_to}),
+                    ?assertEqual({{Vector, ExpectedValue}}, {{Vector, DirectValueList}}),
 
 
-                    DirectDecodedTupleCoordinates = erlzord:decode_tuple(Value, {coord_dim}, {coord_from}, {coord_to}),
-                    ?assertEqual({{Value, DirectDecodedTupleCoordinates}}, {{Value, Coordinates}}),
+                    LegacyDirectValue = erlzord:encode(Vector, {coord_dim}, {coord_from}, {coord_to}),
+                    ?assertEqual({{Vector, ExpectedValue}}, {{Vector, LegacyDirectValue}}),
 
-                    DirectDecodedListCoordinates = erlzord:decode_list(Value, {coord_dim}, {coord_from}, {coord_to}),
-                    ?assertEqual({{Value, list_to_tuple(DirectDecodedListCoordinates)}}, {{Value, Coordinates}}),
+                    LegacyDirectListValue = erlzord:encode(tuple_to_list(Vector), {coord_dim}, {coord_from}, {coord_to}),
+                    ?assertEqual({{Vector, ExpectedValue}}, {{Vector, LegacyDirectListValue}}),
 
-                    DirectDecodedLegacyTupleCoordinates = erlzord:decode(Value, {coord_dim}, {coord_from}, {coord_to}),
-                    ?assertEqual({{Value, DirectDecodedLegacyTupleCoordinates}}, {{Value, Coordinates}})
+
+                    DecodedTupleVector = erlzord:decode_tuple(Value, Config),
+                    ?assertEqual({{Value, DecodedTupleVector}}, {{Value, Vector}}),
+
+                    DecodedListVector = erlzord:decode_list(Value, Config),
+                    ?assertEqual({{Value, list_to_tuple(DecodedListVector)}}, {{Value, Vector}}),
+
+                    DecodedLegacyTupleVector = erlzord:decode(Value, Config),
+                    ?assertEqual({{Value, DecodedLegacyTupleVector}}, {{Value, Vector}}),
+
+
+                    DirectDecodedTupleVector = erlzord:decode_tuple(Value, {coord_dim}, {coord_from}, {coord_to}),
+                    ?assertEqual({{Value, DirectDecodedTupleVector}}, {{Value, Vector}}),
+
+                    DirectDecodedListVector = erlzord:decode_list(Value, {coord_dim}, {coord_from}, {coord_to}),
+                    ?assertEqual({{Value, list_to_tuple(DirectDecodedListVector)}}, {{Value, Vector}}),
+
+                    DirectDecodedLegacyTupleVector = erlzord:decode(Value, {coord_dim}, {coord_from}, {coord_to}),
+                    ?assertEqual({{Value, DirectDecodedLegacyTupleVector}}, {{Value, Vector}})
                 end,
                 Terms)
         end

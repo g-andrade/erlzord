@@ -41,15 +41,15 @@ your\_application.app.src
 ]}
 ```
 
-##### 2\. Encode and decode your coordinates
+##### 2\. Encode and decode your vectors
 
 2d points
 
 ```erlang
 Config = erlzord:config(#{
     dimensions => 2,
-    min_coordinate_value => -1000,
-    max_coordinate_value => +1000
+    min_component => -1000,
+    max_component => +1000
 }),
 
 1595729 = erlzord:encode({245, -456}, Config),
@@ -61,8 +61,8 @@ Config = erlzord:config(#{
 ```erlang
 Config = erlzord:config(#{
     dimensions => 3,
-    min_coordinate_value => 0,
-    max_coordinate_value => 100
+    min_component => 0,
+    max_component => 100
 }),
 
 123788 = erlzord:encode({42, 52, 21}, Config),
@@ -74,8 +74,8 @@ Config = erlzord:config(#{
 ```erlang
 Config = erlzord:config(#{
     dimensions => 10,
-    min_coordinate_value => 0,
-    max_coordinate_value => 700
+    min_component => 0,
+    max_component => 700
 }),
 
 740763791023146735114306653082 =
@@ -100,15 +100,15 @@ mix.exs
   end
 ```
 
-##### 2\. Encode and decode your coordinates
+##### 2\. Encode and decode your vectors
 
 2d points
 
 ```elixir
 config = :erlzord.config(%{
     dimensions: 2,
-    min_coordinate_value: -1000,
-    max_coordinate_value: +1000
+    min_component: -1000,
+    max_component: +1000
 })
 
 1595729 = :erlzord.encode({245,-456}, config)
@@ -120,8 +120,8 @@ config = :erlzord.config(%{
 ```elixir
 config = :erlzord.config(%{
     dimensions: 3,
-    min_coordinate_value: 0,
-    max_coordinate_value: 100
+    min_component: 0,
+    max_component: 100
 }),
 
 123788 = :erlzord.encode({42,52,21}, config)
@@ -133,8 +133,8 @@ config = :erlzord.config(%{
 ```elixir
 config = erlzord:config(%{
     dimensions: 10,
-    min_coordinate_value: 0,
-    max_coordinate_value: 700
+    min_component: 0,
+    max_component: 700
 }),
 
 740763791023146735114306653082 =
