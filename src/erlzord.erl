@@ -96,8 +96,15 @@
 -export_type([list_vector/0]).
 
 -record(encoding_direction, {
-    shift_start_offset :: non_neg_integer(),
+    shift_start :: non_neg_integer(),
     shift_increment :: +1 | -1
+}).
+
+-record(z_builder, {
+    head :: non_neg_integer(),
+    head_sz :: non_neg_integer(),
+    tail_data :: [binary()],
+    tail_sz :: non_neg_integer()
 }).
 
 %% ------------------------------------------------------------------
@@ -332,45 +339,71 @@ encode_list_(Vector, Dimensions, MinComponent, MaxComponent) ->
     interleave(NormalizedVector, Dimensions). %, ComponentBitsize).
 
 interleave(Values, Dimensions) ->
-    Direction = #encoding_direction{shift_start_offset = 0, shift_increment = +1},
+    Direction = #encoding_direction{shift_start = 0, shift_increment = +1},
     AlternateDirection
-        = #encoding_direction{shift_start_offset = Dimensions - 1, shift_increment = -1},
+        = #encoding_direction{shift_start = Dimensions - 1, shift_increment = -1},
 
-    interleave_recur(Values, Direction, AlternateDirection, Dimensions, _BitsizeAcc = 0, _Acc = 0).
+    Builder = #z_builder{head = 0, head_sz = 0, tail_data = [], tail_sz = 0},
+    interleave_recur(Values, Direction, AlternateDirection, Dimensions, Builder).
 
-interleave_recur(Values, Direction, AlternateDirection, Dimensions, BitsizeAcc, Acc) ->
-    ShiftStart = BitsizeAcc + Direction#encoding_direction.shift_start_offset,
-    ShiftIncrement = Direction#encoding_direction.shift_increment,
+interleave_recur(Values, Direction, AlternateDirection, Dimensions, Builder) ->
+    #encoding_direction{shift_start = ShiftStart, shift_increment = ShiftIncrement} = Direction,
     % io:format("INTERLEAVING AFTER ~b bits~n", [BitsizeAcc]),
 
-    case interleave_next(Values, ShiftStart, ShiftIncrement, true, [], Acc) of
-        {RemainingValues, UpdatedAcc} ->
-            UpdatedBitsizeAcc = BitsizeAcc + Dimensions,
+    case interleave_next(Values, ShiftStart, ShiftIncrement, true, [], 0) of
+        {RemainingValues, Slice} ->
+            UpdatedBuilder = prepend_to_builder(Builder, Slice, Dimensions),
             interleave_recur(RemainingValues, AlternateDirection, Direction, Dimensions,
-                             UpdatedBitsizeAcc, UpdatedAcc);
+                             UpdatedBuilder);
 
         all_zeroes ->
-            Acc
+            builder_to_integer(Builder)
     end.
 
-interleave_next([Value | Next], Shift, ShiftIncrement, AllZeroes, RemainingValuesAcc, Acc) ->
+interleave_next([Value | Next], Shift, ShiftIncrement, AllZeroes, RemainingValuesAcc, SliceAcc) ->
     ValueRemaining = Value bsr 1,
     ValueMask = (Value band 1) bsl Shift,
 
     UpdatedAllZeroes = AllZeroes andalso (Value =:= 0),
     UpdatedRemainingValuesAcc = [ValueRemaining | RemainingValuesAcc],
-    UpdatedAcc = Acc bor ValueMask,
+    UpdatedSliceAcc = SliceAcc bor ValueMask,
 
     interleave_next(Next, Shift + ShiftIncrement, ShiftIncrement, UpdatedAllZeroes,
-                    UpdatedRemainingValuesAcc, UpdatedAcc);
-interleave_next([], _Shift, _ShiftIncrement, AllZeroes, RemainingValuesAcc, Acc) ->
+                    UpdatedRemainingValuesAcc, UpdatedSliceAcc);
+interleave_next([], _Shift, _ShiftIncrement, AllZeroes, RemainingValuesAcc, UpdatedSliceAcc) ->
     case AllZeroes of
         false ->
-            {RemainingValuesAcc, Acc};
+            {RemainingValuesAcc, UpdatedSliceAcc};
 
         true ->
             all_zeroes
     end.
+
+prepend_to_builder(Builder, Slice, Dimensions) ->
+    case Builder#z_builder.head_sz + Dimensions of
+        UpdatedHeadSz when UpdatedHeadSz < 60 ->
+            UpdatedHead = (Slice bsl Builder#z_builder.head_sz) bor Builder#z_builder.head,
+            Builder#z_builder{head = UpdatedHead, head_sz = UpdatedHeadSz};
+
+        TooLarge ->
+            NewHeadSz = TooLarge rem 32,
+            <<NewHead:NewHeadSz, MoreTailData/bytes>> = <<
+                Slice:Dimensions,
+                (Builder#z_builder.head):(Builder#z_builder.head_sz)
+            >>,
+
+            Builder#z_builder{
+              head = NewHead,
+              head_sz = NewHeadSz,
+              tail_data = [MoreTailData | Builder#z_builder.tail_data],
+              tail_sz = Builder#z_builder.tail_sz + bit_size(MoreTailData)
+            }
+    end.
+
+builder_to_integer(Builder) ->
+    HigherZ = Builder#z_builder.head bsl Builder#z_builder.tail_sz,
+    LowerZ = binary:decode_unsigned(iolist_to_binary(Builder#z_builder.tail_data)),
+    HigherZ bor LowerZ.
 
 -spec decode_list_(Z, Dimensions, MinComponent, MaxComponent,
                    Bitsize) -> Vector
