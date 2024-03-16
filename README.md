@@ -117,7 +117,7 @@ config = :erlzord.config(%{
 
 3d points
 
-```erlang
+```elixir
 config = :erlzord.config(%{
     dimensions: 3,
     min_coordinate_value: 0,
@@ -130,7 +130,7 @@ config = :erlzord.config(%{
 
 10d points
 
-```erlang
+```elixir
 config = erlzord:config(%{
     dimensions: 10,
     min_coordinate_value: 0,
