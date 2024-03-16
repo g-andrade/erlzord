@@ -2,7 +2,7 @@
 
 [![Hex downloads](https://img.shields.io/hexpm/dt/erlzord.svg)](https://hex.pm/packages/erlzord)
 [![License](https://img.shields.io/hexpm/l/erlzord.svg)](https://github.com/g-andrade/erlzord/blob/master/LICENSE)
-[![Erlang Versions](https://img.shields.io/badge/Erlang%2FOTP-19.3%20to%2026-blue)](https://www.erlang.org)
+[![Erlang Versions](https://img.shields.io/badge/Erlang%2FOTP-20.3%20to%2026-blue)](https://www.erlang.org)
 [![CI status](https://github.com/g-andrade/erlzord/actions/workflows/ci.yml/badge.svg)](https://github.com/g-andrade/erlzord/actions/workflows/ci.yml)
 [![Latest version](https://img.shields.io/hexpm/v/erlzord.svg?style=flat)](https://hex.pm/packages/erlzord)
 [![API reference](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/erlzord/)

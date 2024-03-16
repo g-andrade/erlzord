@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CI from Travis to GitHub Actions
 
+### Removed
+
+- support for OTP 19
+
 ## [1.1.0] - 2020-05-26
 
 ### Added
