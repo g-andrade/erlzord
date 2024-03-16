@@ -1,67 +1,174 @@
+# Z-order curve / Morton code for Erlang
 
+[![Hex downloads](https://img.shields.io/hexpm/dt/erlzord.svg)](https://hex.pm/packages/erlzord)
+[![License](https://img.shields.io/hexpm/l/erlzord.svg)](https://github.com/g-andrade/erlzord/blob/master/LICENSE)
+[![Erlang Versions](https://img.shields.io/badge/Erlang%2FOTP-19.3%20to%2026-blue)](https://www.erlang.org)
+[![CI status](https://github.com/g-andrade/erlzord/actions/workflows/ci.yml/badge.svg)](https://github.com/g-andrade/erlzord/actions/workflows/ci.yml)
+[![Latest version](https://img.shields.io/hexpm/v/erlzord.svg?style=flat)](https://hex.pm/packages/erlzord)
+[![API reference](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/erlzord/)
+[![Last commit](https://img.shields.io/github/last-commit/g-andrade/erlzord.svg)](https://github.com/g-andrade/erlzord/commits/master)
 
-# erlzord #
+`erlzord` is an implementation of the [Z-order curve](https://en.wikipedia.org/wiki/Z-order_curve),
+or Morton code, for Erlang and Elixir.
 
-Copyright (c) 2017 Guilherme Andrade
+Any number of dimensions is supported and there is no limit on the bitsize of output values.
 
-__Version:__ 1.0.3
+The test cases were generated based on an existing [Python implementation](https://github.com/LLNL/rubik/blob/master/rubik/zorder.py) from the [rubik](https://github.com/LLNL/rubik) project.
 
-__Authors:__ Guilherme Andrade ([`erlzord(at)gandrade(dot)net`](mailto:erlzord(at)gandrade(dot)net)).
+### How to use
 
-`erlzord`: N-dimensional Z-order curves for Erlang
+#### Erlang
 
+##### 1\. Import as a dependency
 
----------
-
-`erlzord` is a straightforward Erlang implementation of the [Z-order curve](https://en.wikipedia.org/wiki/Z-order_curve) function.
-
-* Any number of dimensions is supported
-* No limit on the bitsize of output values
-
-The code was successfully tested on generations 17, 18 and 19 of Erlang/OTP; the test cases and their data
-were automatically generated based on an existing [Python implementation](https://github.com/LLNL/rubik/blob/master/rubik/zorder.py)
-from the [rubik](https://github.com/LLNL/rubik) project.
-
-
-### <a name="Examples">Examples</a> ###
-
+rebar.config
 
 ```erlang
-
-% 1d points
-Config = erlzord:config(1, 0, 100), % Coordinate values between 0 and 100
-erlzord:encode({42}, Config),       % 42
-erlzord:decode(42, Config).         % {42}
-
-% 2d points
-Config = erlzord:config(2, 0, 100),
-erlzord:encode({50,0}, Config), % 1284
-erlzord:decode(1284,   Config). % {50,0}
-
-% 3d points
-Config = erlzord:config(3, 0, 100),
-erlzord:encode({0,0,100}, Config), % 1179904
-erlzord:decode(1179904,   Config). % {0,0,100}
-
-% 10d points
-Config = erlzord:config(10, 0, 100),
-erlzord:encode(
-    {100, 100, 100, 100, 100, 100, 100,
-     100, 100, 100}, Config), % 1180590494818577154048
-erlzord:decode(
-    1180590494818577154048, Config). % {100,100,..,100}.
-
+{deps, [
+    % [...]
+    {erlzord, "~> 1.1"}
+]}.
 ```
 
+your\_application.app.src
 
-### <a name="TODO">TODO</a> ###
+```erlang
+{applications, [
+    kernel,
+    stdlib,
+    % [...]
+    erlzord
+]}
+```
 
-* Range searches
+##### 2\. Encode and decode your coordinates
 
+2d points
 
-## Modules ##
+```erlang
+Config = erlzord:config(#{
+    dimensions => 2,
+    min_coordinate_value => -1000,
+    max_coordinate_value => +1000
+}),
 
+1595729 = erlzord:encode({245, -456}, Config),
+{245,-456} = erlzord:decode(1595729, Config).
+```
 
-<table width="100%" border="0" summary="list of modules">
-<tr><td><a href="https://github.com/g-andrade/erlzord/blob/master/doc/erlzord.md" class="module">erlzord</a></td></tr></table>
+3d points
 
+```erlang
+Config = erlzord:config(#{
+    dimensions => 3,
+    min_coordinate_value => 0,
+    max_coordinate_value => 100
+}),
+
+123788 = erlzord:encode({42, 52, 21}, Config),
+{42,52,21} = erlzord:decode_tuple(123788, Config).
+```
+
+10d points
+
+```erlang
+Config = erlzord:config(#{
+    dimensions => 10,
+    min_coordinate_value => 0,
+    max_coordinate_value => 700
+}),
+
+740763791023146735114306653082 =
+    erlzord:encode([400,543,632,445,565,0,674,491,403,555], Config),
+
+[400,543,632,445,565,0,674,491,403,555] =
+    erlzord:decode_list(740763791023146735114306653082, Config).
+```
+
+#### Elixir
+
+##### 1\. Import as a dependency
+
+mix.exs
+
+``` elixir
+  defp deps do
+    [
+      # [...]
+      {:erlzord, "~> 1.1"}
+    ]
+  end
+```
+
+##### 2\. Encode and decode your coordinates
+
+2d points
+
+```elixir
+config = :erlzord.config(%{
+    dimensions: 2,
+    min_coordinate_value: -1000,
+    max_coordinate_value: +1000
+})
+
+1595729 = :erlzord.encode({245,-456}, config)
+{245,-456} = :erlzord.decode(1595729, Config)
+```
+
+3d points
+
+```erlang
+config = :erlzord.config(%{
+    dimensions: 3,
+    min_coordinate_value: 0,
+    max_coordinate_value: 100
+}),
+
+123788 = :erlzord.encode({42,52,21}, config)
+{42,52,21} = :erlzord.decode_tuple(123788, config)
+```
+
+10d points
+
+```erlang
+config = erlzord:config(%{
+    dimensions: 10,
+    min_coordinate_value: 0,
+    max_coordinate_value: 700
+}),
+
+740763791023146735114306653082 =
+    :erlzord.encode([400,543,632,445,565,0,674,491,403,555], config)
+
+[400,543,632,445,565,0,674,491,403,555] =
+    :erlzord.decode_list(740763791023146735114306653082, Config)
+```
+
+### API Reference
+
+The API reference can be found on [HexDocs](https://hexdocs.pm/erlzord/).
+
+### License
+
+MIT License
+
+Copyright (c) 2017-2024 Guilherme Andrade
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -1,83 +1,557 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Module erlzord</title>
-<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
-</head>
-<body bgcolor="white">
-<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<hr>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.30.7">
+    <meta name="project" content="erlzord v1.1.0">
 
-<h1>Module erlzord</h1>
-<ul class="index"><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+    <title>erlzord — erlzord v1.1.0</title>
+    <link rel="stylesheet" href="dist/html-erlang-BDSMJ657.css" />
 
 
-<h2><a name="types">Data Types</a></h2>
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-EPF2X7PV.js"></script>
+    <script src="dist/sidebar_items-DCDEF144.js"></script>
 
-<h3 class="typedecl"><a name="type-config">config()</a></h3>
-<p><b>abstract datatype</b>: <tt>config()</tt></p>
+      <script src="docs_config.js"></script>
 
-
-<h3 class="typedecl"><a name="type-coordinates">coordinates()</a></h3>
-<p><tt>coordinates() = <a href="#type-list_coordinates">list_coordinates()</a> | <a href="#type-tuple_coordinates">tuple_coordinates()</a></tt></p>
-
-
-<h3 class="typedecl"><a name="type-list_coordinates">list_coordinates()</a></h3>
-<p><tt>list_coordinates() = [integer()]</tt></p>
+    <script async src="dist/html-J2ASZTQE.js"></script>
 
 
-<h3 class="typedecl"><a name="type-tuple_coordinates">tuple_coordinates()</a></h3>
-<p><tt>tuple_coordinates() = tuple()</tt></p>
+  </head>
+  <body data-type="modules" class="page-module">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <label class="search-label">
+      <span class="sr-only">Search documentation of erlzord</span>
+      <input name="q" type="text" class="search-input" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </label>
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+      <i class="ri-close-line ri-lg" title="Cancel search"></i>
+    </button>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="readme.html" class="sidebar-projectName" translate="no">
+erlzord
+      </a>
+      <div class="sidebar-projectVersion" translate="no">
+        v1.1.0
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
 
 
-<h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#config-3">config/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#decode-2">decode/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#decode-4">decode/4</a></td><td></td></tr>
-<tr><td valign="top"><a href="#encode-2">encode/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#encode-4">encode/4</a></td><td></td></tr>
-</table>
+    </ul>
+  </div>
 
-<h2><a name="functions">Function Details</a></h2>
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
 
-<h3 class="function"><a name="config-3">config/3</a></h3>
-<div class="spec">
-<p><tt>config(Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Config</tt>
-<ul class="definitions"><li><tt>Dimension = non_neg_integer()</tt></li><li><tt>MinCoordinateValue = integer()</tt></li><li><tt>MaxCoordinateValue = integer()</tt></li><li><tt>Config = <a href="#type-config">config()</a></tt></li></ul></p>
-<p> </p>
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="icon-action display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L1" title="View Source" class="icon-action" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span translate="no">erlzord</span> 
+  <small class="app-vsn" translate="no">(erlzord v1.1.0)</small>
+
+</h1>
+
+
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:config/0" translate="no">config/0</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:coordinates/0" translate="no">coordinates/0</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:list_coordinates/0" translate="no">list_coordinates/0</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:tuple_coordinates/0" translate="no">tuple_coordinates/0</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#config/3" translate="no">config(Dimension, MinCoordinateValue, MaxCoordinateValue)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#decode/2" translate="no">decode(Z, Config)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#decode/4" translate="no">decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#encode/2" translate="no">encode(Coordinates, Config)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#encode/4" translate="no">encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue)</a>
+
+      </div>
+
+    </div>
+
 </div>
 
-<h3 class="function"><a name="decode-2">decode/2</a></h3>
-<div class="spec">
-<p><tt>decode(Z, Config) -&gt; Coordinates</tt>
-<ul class="definitions"><li><tt>Z = non_neg_integer()</tt></li><li><tt>Config = <a href="#type-config">config()</a></tt></li><li><tt>Coordinates = <a href="#type-tuple_coordinates">tuple_coordinates()</a></tt></li></ul></p>
-<p> </p>
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:config/0">
+
+  <div class="detail-header">
+    <a href="#t:config/0" class="detail-link" title="Link to this opaque">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this opaque</span>
+    </a>
+    <h1 class="signature" translate="no">config/0</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L38" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+      <span class="note">(opaque)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-opaque</span> config()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:coordinates/0">
+
+  <div class="detail-header">
+    <a href="#t:coordinates/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">coordinates/0</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L45" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-type</span> coordinates() :: <a href="#t:list_coordinates/0">list_coordinates</a>() | <a href="#t:tuple_coordinates/0">tuple_coordinates</a>().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:list_coordinates/0">
+
+  <div class="detail-header">
+    <a href="#t:list_coordinates/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">list_coordinates/0</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L43" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-type</span> list_coordinates() :: [integer()].</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:tuple_coordinates/0">
+
+  <div class="detail-header">
+    <a href="#t:tuple_coordinates/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">tuple_coordinates/0</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L44" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-type</span> tuple_coordinates() :: tuple().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="config/3">
+
+  <div class="detail-header">
+    <a href="#config/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">config(Dimension, MinCoordinateValue, MaxCoordinateValue)</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L62" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> config(Dimension, MinCoordinateValue, MaxCoordinateValue) -> Config
+          when
+              Dimension :: non_neg_integer(),
+              MinCoordinateValue :: integer(),
+              MaxCoordinateValue :: integer(),
+              Config :: <a href="#t:config/0">config</a>().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="decode/2">
+
+  <div class="detail-header">
+    <a href="#decode/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">decode(Z, Config)</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L91" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> decode(Z, Config) -> Coordinates
+          when Z :: non_neg_integer(), Config :: <a href="#t:config/0">config</a>(), Coordinates :: <a href="#t:tuple_coordinates/0">tuple_coordinates</a>().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="decode/4">
+
+  <div class="detail-header">
+    <a href="#decode/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue)</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L121" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Coordinates
+          when
+              Z :: non_neg_integer(),
+              Dimension :: non_neg_integer(),
+              MinCoordinateValue :: integer(),
+              MaxCoordinateValue :: integer(),
+              Coordinates :: <a href="#t:tuple_coordinates/0">tuple_coordinates</a>().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="encode/2">
+
+  <div class="detail-header">
+    <a href="#encode/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">encode(Coordinates, Config)</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L78" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> encode(Coordinates, Config) -> Z
+          when Coordinates :: <a href="#t:coordinates/0">coordinates</a>(), Config :: <a href="#t:config/0">config</a>(), Z :: non_neg_integer().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="encode/4">
+
+  <div class="detail-header">
+    <a href="#encode/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue)</h1>
+
+      <a href="https://github.com/g-andrade/erlzord/blob/v1.1.0/src/erlzord.erl#L105" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -> Z
+          when
+              Coordinates :: <a href="#t:coordinates/0">coordinates</a>(),
+              Dimension :: non_neg_integer(),
+              MinCoordinateValue :: integer(),
+              MaxCoordinateValue :: integer(),
+              Z :: non_neg_integer().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+      <footer class="footer">
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/erlzord/1.1.0" class="footer-hex-package">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/erlzord/1.1.0">Hex Preview</a>
+
+                (<a href="https://preview.hex.pm/preview/erlzord/1.1.0/show/src/erlzord.erl">current file</a>)
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="erlzord.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.7) for the
+
+            <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</main>
 </div>
 
-<h3 class="function"><a name="decode-4">decode/4</a></h3>
-<div class="spec">
-<p><tt>decode(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Coordinates</tt>
-<ul class="definitions"><li><tt>Z = non_neg_integer()</tt></li><li><tt>Dimension = non_neg_integer()</tt></li><li><tt>MinCoordinateValue = integer()</tt></li><li><tt>MaxCoordinateValue = integer()</tt></li><li><tt>Coordinates = <a href="#type-tuple_coordinates">tuple_coordinates()</a></tt></li></ul></p>
-<p> </p>
-</div>
 
-<h3 class="function"><a name="encode-2">encode/2</a></h3>
-<div class="spec">
-<p><tt>encode(Coordinates, Config) -&gt; Z</tt>
-<ul class="definitions"><li><tt>Coordinates = <a href="#type-coordinates">coordinates()</a></tt></li><li><tt>Config = <a href="#type-config">config()</a></tt></li><li><tt>Z = non_neg_integer()</tt></li></ul></p>
-<p> </p>
-</div>
-
-<h3 class="function"><a name="encode-4">encode/4</a></h3>
-<div class="spec">
-<p><tt>encode(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue) -&gt; Z</tt>
-<ul class="definitions"><li><tt>Coordinates = <a href="#type-coordinates">coordinates()</a></tt></li><li><tt>Dimension = non_neg_integer()</tt></li><li><tt>MinCoordinateValue = integer()</tt></li><li><tt>MaxCoordinateValue = integer()</tt></li><li><tt>Z = non_neg_integer()</tt></li></ul></p>
-<p> </p>
-</div>
-<hr>
-
-<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc</i></p>
-</body>
+  </body>
 </html>
