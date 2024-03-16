@@ -16,11 +16,8 @@ coord_bitsize = coord_range.bit_length()
 
 encoder = zorder.ZEncoder(ndim=coord_dimension, bits=(coord_bitsize * coord_dimension))
 
-def cull(v):
-    return max(coord_min_value, min(coord_max_value, v))
-
 def encode(coordinates):
-    coordinates = list(map(lambda v: cull(v) - coord_min_value, coordinates))
+    coordinates = list(map(lambda v: v - coord_min_value, coordinates))
     return encoder.encode(coordinates)
 
 def repeat(fun, n):

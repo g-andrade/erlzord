@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- ⚠️ **culling of values** (see MIGRATION.md)
 - support for OTP 19
 
 ## [1.1.0] - 2020-05-26

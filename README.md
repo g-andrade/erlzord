@@ -26,7 +26,7 @@ rebar.config
 ```erlang
 {deps, [
     % [...]
-    {erlzord, "~> 1.1"}
+    {erlzord, "~> 2.0"}
 ]}.
 ```
 
@@ -95,7 +95,7 @@ mix.exs
   defp deps do
     [
       # [...]
-      {:erlzord, "~> 1.1"}
+      {:erlzord, "~> 2.0"}
     ]
   end
 ```

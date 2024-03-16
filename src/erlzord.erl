@@ -320,9 +320,9 @@ coordinate_bitsize(MinCoordinateValue, MaxCoordinateValue) ->
 %% @doc Encodes `Coordinates', a tuple or list of `Dimension`
 %% Returns a pre-validated config which `:encode/2' and `:decode/2'` can use.
 encode_list_(Coordinates, Dimension, MinCoordinateValue, MaxCoordinateValue, CoordinateBitsize) ->
-    % Cull values and make them unsigned
+    % Make values unsigned
     NormalizedCoordinates =
-        [cull(V, MinCoordinateValue, MaxCoordinateValue) - MinCoordinateValue
+        [validate_coordinate_value(V, MinCoordinateValue, MaxCoordinateValue) - MinCoordinateValue
          || V <- Coordinates],
     interleave(NormalizedCoordinates, Dimension, CoordinateBitsize).
 
@@ -447,18 +447,16 @@ unchain_values_recur(Conjugated, Bitsize, BitIndex, [H | T], NewValuesAcc) ->
     NewH = H bor (Bit bsl BitIndex),
     unchain_values_recur(NewConjugated, Bitsize, BitIndex, T, [NewH | NewValuesAcc]).
 
--spec cull(Value, Min, Max) -> CulledValue
+-spec validate_coordinate_value(Value, Min, Max) -> Value
         when Value :: integer(),
              Min :: integer(),
-             Max :: integer(),
-             CulledValue :: integer().
-
-cull(Value, Min, Max) when is_integer(Value) ->
+             Max :: integer().
+validate_coordinate_value(Value, Min, Max) when is_integer(Value) ->
     case Value of
         _ when Value > Max ->
-            Max;
+            error({coordinate_value_higher_than_max, [{value, Value}, {max, Max}]});
         _ when Value < Min ->
-            Min;
+            error({coordinate_value_lower_than_min, [{value, Value}, {min, Min}]});
         _ ->
             Value
     end.
