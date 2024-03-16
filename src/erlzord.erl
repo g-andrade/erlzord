@@ -31,12 +31,10 @@
          encode/4,
          decode/4]).
 
--deprecated([
-   {config, 3, "Use config/1 instead"},
-   {decode, 2, "Use decode_tuple/2 or decode_list/2 instead"},
-   {encode, 4, "Use encode/3 instead"},
-   {decode, 4, "Use decode_tuple/4 or decode_list/4 instead"}
-]).
+-deprecated({config, 3, "Use config/1 instead"}).
+-deprecated({decode, 2, "Use decode_tuple/2 or decode_list/2 instead"}).
+-deprecated({encode, 4, "Use encode/3 instead"}).
+-deprecated({decode, 4, "Use decode_tuple/4 or decode_list/4 instead"}).
 
 %% ------------------------------------------------------------------
 %% Macro Definitions
@@ -53,7 +51,7 @@
 %% ------------------------------------------------------------------
 
 -type config_params() :: #{
-    (dimensions|dimension) := non_neg_integer(),
+    (dimensions | dimension) := non_neg_integer(),
     min_coordinate_value := integer(),
     max_coordinate_value := integer()
 }.
@@ -141,7 +139,7 @@ decode_tuple(Z, Config) ->
 -spec decode_list(Z, Config) -> Coordinates
         when Z :: non_neg_integer(),
              Config :: config(),
-             Coordinates :: tuple_coordinates().
+             Coordinates :: list_coordinates().
 decode_list(Z, #erlzord_config{
                   dimension = Dimension,
                   min_coordinate_value = MinCoordinateValue,
@@ -190,7 +188,7 @@ decode_tuple(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) ->
              Dimension :: non_neg_integer(),
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
-             Coordinates :: tuple_coordinates().
+             Coordinates :: list_coordinates().
 decode_list(Z, Dimension, MinCoordinateValue, MaxCoordinateValue) ->
     validate_params(Dimension, MinCoordinateValue, MaxCoordinateValue),
 
@@ -362,7 +360,7 @@ conjugate_values_recur([H | T], DimensionIndex, AccConjugated, AccNewValues) ->
              MinCoordinateValue :: integer(),
              MaxCoordinateValue :: integer(),
              Bitsize :: non_neg_integer(),
-             Coordinates :: tuple_coordinates().
+             Coordinates :: list_coordinates().
 decode_list_(Z, Dimension, MinCoordinateValue, MaxCoordinateValue, Bitsize) ->
     {NewZ, NormalizedCoordinates} = revert_interleave(Z, Dimension, Bitsize),
 
