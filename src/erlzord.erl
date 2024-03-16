@@ -31,10 +31,29 @@
          encode/4,
          decode/4]).
 
--deprecated({config, 3, "Use config/1 instead"}).
--deprecated({decode, 2, "Use decode_tuple/2 or decode_list/2 instead"}).
--deprecated({encode, 4, "Use encode/3 instead"}).
--deprecated({decode, 4, "Use decode_tuple/4 or decode_list/4 instead"}).
+-ifndef(OTP_RELEASE).
+-define(NO_XREF_DEPRECATED_WITH_MSG, true).
+-else.
+-if(?OTP_RELEASE =< 22).
+-define(NO_XREF_DEPRECATED_WITH_MSG, true).
+-endif.
+-endif.
+
+-ifdef(NO_XREF_DEPRECATED_WITH_MSG).
+-deprecated([
+   {config, 3},
+   {decode, 2},
+   {encode, 4},
+   {decode, 4}
+]).
+-else.
+-deprecated([
+   {config, 3, "Use config/1 instead"},
+   {decode, 2, "Use decode_tuple/2 or decode_list/2 instead"},
+   {encode, 4, "Use encode/3 instead"},
+   {decode, 4, "Use decode_tuple/4 or decode_list/4 instead"}
+]).
+-endif.
 
 %% ------------------------------------------------------------------
 %% Macro Definitions
