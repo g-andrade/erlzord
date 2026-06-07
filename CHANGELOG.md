@@ -7,14 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- support for OTP 24 through 29
+- map-based `config/1` plus `encode/2`, `decode_tuple/2`, `decode_list/2`,
+  `encode/3`, `decode_tuple/4` and `decode_list/4`
+- API documentation rendered with ex_doc (EEP-48 native docs)
+
 ### Changed
 
+- ⚠️ out-of-bounds vector components now raise an exception instead of being
+  silently culled (see MIGRATION.md)
+- the API now speaks of "vectors" rather than "coordinates"
 - CI from Travis to GitHub Actions
+- development tooling: erlfmt, rebar3_hank, rebar3_lint (Elvis) and Dialyzer
+
+### Deprecated
+
+- `config/3`, `decode/2`, `encode/4` and `decode/4`
 
 ### Removed
 
 - ⚠️ **culling of values** (see MIGRATION.md)
-- support for OTP 19
+- support for OTP 19 through 23
 
 ## [1.1.0] - 2020-05-26
 
