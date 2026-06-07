@@ -4,31 +4,28 @@ on:
   push:
     branches:
       - main
-      - develop
   pull_request:
     branches:
       - main
-      - develop
   workflow_dispatch:
 jobs:
   ci:
-    name: Run CI with Erlang/OTP ${{matrix.otp_vsn}}
+    name: Run checks and tests over ${{matrix.otp_vsn}} and ${{matrix.os}}
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
         otp_vsn: [
-            '20.3',
-            '21.3',
-            '22.3',
-            '23.3',
             '24.3',
             '25.3',
-            '26.2'
+            '26.2',
+            '27.3',
+            '28.5',
+            '29.0'
         ]
-        os: ['ubuntu-20.04']
+        os: ['ubuntu-22.04']
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - id: otp-version-to-rebar3-version
         name: "Read #{OTP version => rebar3 version} map"
@@ -50,14 +47,14 @@ jobs:
       - name: Set dynamic env (1)
         run: |
           echo "prev_github_run_number=$((${{github.run_number}} - 1))" >> "$GITHUB_ENV"
-          echo "build_cache_prefix=_build-cache-for-os-${{runner.os}}-otp-${{matrix.otp_vsn}}-rebar3-${{steps.setup-beam.outputs.rebar3-version}}" >> "$GITHUB_ENV"
+          echo "build_cache_prefix=_build-cache1-for-os-${{runner.os}}-otp-${{matrix.otp_vsn}}-rebar3-${{steps.setup-beam.outputs.rebar3-version}}" >> "$GITHUB_ENV"
 
       - name: Set dynamic env (2)
         run: |
           echo "build_cache_prefix_with_hash=${{env.build_cache_prefix}}-hash-${{hashFiles('rebar.lock')}}" >> "$GITHUB_ENV"
 
       - name: Restore cached build artifacts
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: _build
           key: ${{env.build_cache_prefix_with_hash}}-${{env.prev_github_run_number}}
@@ -65,15 +62,18 @@ jobs:
             ${{env.build_cache_prefix_with_hash}}-
             ${{env.build_cache_prefix}}-
 
+      - name: Run Fast Checks
+        run: make check-fast
+
       - name: Run Tests
         run: make test
 
-      - name: Run Checks
-        run: make check
+      - name: Run Slow Checks
+        run: make check-slow
 
       - name: Save build artifacts to cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: _build
           key: ${{env.build_cache_prefix_with_hash}}-${{github.run_number}}
