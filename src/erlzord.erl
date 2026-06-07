@@ -1,5 +1,28 @@
 -module(erlzord).
 
+-ifdef(E48).
+-moduledoc """
+N-dimensional [Z-order curve](https://en.wikipedia.org/wiki/Z-order_curve)
+(Morton code) encoding and decoding.
+
+Any number of dimensions is supported and there is no limit on the bitsize of
+the encoded values.
+
+## Example
+
+```erlang
+Config = erlzord:config(#{
+    dimensions => 2,
+    min_component => -1000,
+    max_component => +1000
+}),
+
+1595729 = erlzord:encode({245, -456}, Config),
+{245, -456} = erlzord:decode_tuple(1595729, Config).
+```
+""".
+-endif.
+
 %% ------------------------------------------------------------------
 %% API Function Exports
 %% ------------------------------------------------------------------
@@ -123,6 +146,14 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
+-ifdef(E48).
+-doc """
+Builds a pre-validated `t:config/0` from a `t:config_params/0` map.
+
+The returned config can be reused across any number of `encode/2`,
+`decode_tuple/2` and `decode_list/2` calls that share the same bounds.
+""".
+-endif.
 -spec config(Params) -> Config
         when Params :: config_params(),
              Config :: config().
@@ -138,6 +169,15 @@ config(ConfigParams) ->
             error({badarg, ConfigParams})
     end.
 
+-ifdef(E48).
+-doc """
+Encodes `Vector` into its Z-order (Morton) value using a `t:config/0`.
+
+`Vector` is a tuple or list of `dimensions` integer components. Raises
+`error({badarg, _})` for a malformed vector and on components outside the
+configured `min_component`/`max_component` bounds.
+""".
+-endif.
 -spec encode(Vector, Config) -> Z
         when Vector :: vector(),
              Config :: config(),
@@ -162,6 +202,12 @@ encode(Vector, #erlzord_config{
 encode(_Vector, BadArg) ->
     error({badarg, BadArg}).
 
+-ifdef(E48).
+-doc """
+Decodes a Z-order value back into its component vector, as a tuple, using a
+`t:config/0`.
+""".
+-endif.
 -spec decode_tuple(Z, Config) -> Vector
         when Z :: non_neg_integer(),
              Config :: config(),
@@ -170,6 +216,12 @@ decode_tuple(Z, Config) ->
     List = decode_list(Z, Config),
     list_to_tuple(List).
 
+-ifdef(E48).
+-doc """
+Decodes a Z-order value back into its component vector, as a list, using a
+`t:config/0`.
+""".
+-endif.
 -spec decode_list(Z, Config) -> Vector
         when Z :: non_neg_integer(),
              Config :: config(),
@@ -185,6 +237,15 @@ decode_list(Z, #erlzord_config{
 decode_list(_Z, BadArg) ->
     error({badarg, BadArg}).
 
+-ifdef(E48).
+-doc """
+Encodes `Vector` with the component bounds given inline, without a prebuilt
+`t:config/0`.
+
+Prefer `config/1` together with `encode/2` when encoding many vectors that
+share the same bounds.
+""".
+-endif.
 -spec encode(Vector, MinComponent, MaxComponent) -> Z
         when Vector :: vector(),
              MinComponent :: integer(),
@@ -206,6 +267,12 @@ encode(Vector, MinComponent, MaxComponent) ->
     validate_params(Dimensions, MinComponent, MaxComponent),
     encode_list_(List, Dimensions, MinComponent, MaxComponent).
 
+-ifdef(E48).
+-doc """
+Like `decode_tuple/2`, but with `Dimensions` and the component bounds given
+inline instead of a prebuilt `t:config/0`.
+""".
+-endif.
 -spec decode_tuple(Z, Dimensions, MinComponent, MaxComponent) -> Vector
         when Z :: non_neg_integer(),
              Dimensions :: non_neg_integer(),
@@ -216,6 +283,12 @@ decode_tuple(Z, Dimensions, MinComponent, MaxComponent) ->
     List = decode_list(Z, Dimensions, MinComponent, MaxComponent),
     list_to_tuple(List).
 
+-ifdef(E48).
+-doc """
+Like `decode_list/2`, but with `Dimensions` and the component bounds given
+inline instead of a prebuilt `t:config/0`.
+""".
+-endif.
 -spec decode_list(Z, Dimensions, MinComponent, MaxComponent) -> Vector
         when Z :: non_neg_integer(),
              Dimensions :: non_neg_integer(),
@@ -234,6 +307,14 @@ decode_list(Z, Dimensions, MinComponent, MaxComponent) ->
 %% Deprecated API Function Definitions
 %% ------------------------------------------------------------------
 
+-ifdef(E48).
+-doc """
+Deprecated; use `config/1` instead.
+
+Builds a `t:config/0` from positional arguments rather than a
+`t:config_params/0` map.
+""".
+-endif.
 -spec config(Dimensions, MinComponent, MaxComponent) -> Config
         when Dimensions :: non_neg_integer(),
              MinComponent :: integer(),
@@ -242,6 +323,13 @@ decode_list(Z, Dimensions, MinComponent, MaxComponent) ->
 config(Dimensions, MinComponent, MaxComponent) ->
     config_(Dimensions, MinComponent, MaxComponent).
 
+-ifdef(E48).
+-doc """
+Deprecated; use `decode_tuple/2` or `decode_list/2` instead.
+
+Equivalent to `decode_tuple/2`.
+""".
+-endif.
 -spec decode(Z, Config) -> Vector
         when Z :: non_neg_integer(),
              Config :: config(),
@@ -249,6 +337,13 @@ config(Dimensions, MinComponent, MaxComponent) ->
 decode(Z, Config) ->
     decode_tuple(Z, Config).
 
+-ifdef(E48).
+-doc """
+Deprecated; use `encode/3` instead.
+
+`Dimensions` is redundant — it is inferred from the size of `Vector`.
+""".
+-endif.
 -spec encode(Vector, Dimensions, MinComponent, MaxComponent) -> Z
         when Vector :: vector(),
              Dimensions :: non_neg_integer(),
@@ -263,6 +358,13 @@ encode(Vector, Dimensions, MinComponent, MaxComponent)
   ) ->
     encode(Vector, MinComponent, MaxComponent).
 
+-ifdef(E48).
+-doc """
+Deprecated; use `decode_tuple/4` or `decode_list/4` instead.
+
+Equivalent to `decode_tuple/4`.
+""".
+-endif.
 -spec decode(Z, Dimensions, MinComponent, MaxComponent) -> Vector
         when Z :: non_neg_integer(),
              Dimensions :: non_neg_integer(),
@@ -281,7 +383,6 @@ decode(Z, Dimensions, MinComponent, MaxComponent) ->
              MinComponent :: integer(),
              MaxComponent :: integer(),
              Config :: config().
-%% @doc Returns a pre-validated config which `:encode/2' and `:decode/2'` can use.
 config_(Dimensions, MinComponent, MaxComponent) ->
     validate_params(Dimensions, MinComponent, MaxComponent),
 
@@ -329,8 +430,6 @@ component_bitsize(MinComponent, MaxComponent) ->
              MinComponent :: integer(),
              MaxComponent :: integer(),
              Z :: non_neg_integer().
-%% @doc Encodes `Vector', a tuple or list of `Dimensions`
-%% Returns a pre-validated config which `:encode/2' and `:decode/2'` can use.
 encode_list_(Vector, Dimensions, MinComponent, MaxComponent) ->
     % Make values unsigned
     NormalizedVector =
